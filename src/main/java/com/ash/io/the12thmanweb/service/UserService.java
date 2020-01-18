@@ -11,12 +11,11 @@ public interface UserService {
     public int save(User user);
 
     /**
-     * 根据账号密码查询用户
+     * 根据账号查询用户
      * @param username
-     * @param password
      * @return
      */
-    public User findByUsernameAndPassword(String username,String password);
+    public User findByUsername(String username);
 
     /**
      * 根据邮箱查询用户
