@@ -19,7 +19,10 @@ public class UserRepository {
 
     public int save(User user){
         LocalDate now = LocalDate.now();
+        //设置创建时间
         user.setRegisterDate(now);
+        //设置默认头像路径
+        user.setPortraitUrl("../../../static/img/touxiang.png");
         return userMapper.insert(user);
     }
     
@@ -50,5 +53,9 @@ public class UserRepository {
         wrapper.eq("email",email);
         User user = userMapper.selectOne(wrapper);
         return user;
+    }
+
+    public User selectById(Integer id){
+        return userMapper.selectById(id);
     }
 }

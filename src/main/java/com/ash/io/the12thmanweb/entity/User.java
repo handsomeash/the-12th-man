@@ -1,5 +1,7 @@
 package com.ash.io.the12thmanweb.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +17,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    private Long id;
+    //id使用自增，默认mybatis会生成long类型的长id，但是莫名会导致传到前端值有差异
+    @TableId(value = "id",type = IdType.AUTO)
+    private Integer id;
     private String username;
     private String password;
     private String nickname;

@@ -1,11 +1,17 @@
 package com.ash.io.the12thmanweb.configuration;
 
+import com.ash.io.the12thmanweb.shiro.ShiroFilter;
 import com.ash.io.the12thmanweb.shiro.ShiroRealm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.servlet.Filter;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * shiro配置类
@@ -19,6 +25,11 @@ public class ShiroConfiguration {
     public ShiroFilterFactoryBean shiroFilterFactory(DefaultWebSecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
+
+//        Map<String, String > filterChainDefinitionMap = new LinkedHashMap<String, String>();
+//        Map<String, Filter> customizedFilter = new HashMap<>();
+//        // 设置自定义过滤器名称为 url
+//        customizedFilter.put("url", getShiroFilter());
         return shiroFilterFactoryBean;
     }
 
@@ -39,6 +50,15 @@ public class ShiroConfiguration {
         //设置密码校验规则
         shiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
         return shiroRealm;
+    }
+
+    /**
+     * 增加获取过滤器的方法，注意这里不能使用 @Bean
+     * 这个也是过滤器，ShiroFilterFactoryBean 也是过滤器，当他们都出现的时候，默认的什么 anno,authc 过滤器就失效了。
+     * @return
+     */
+    public ShiroFilter getShiroFilter(){
+        return new ShiroFilter();
     }
 
     /**

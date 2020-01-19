@@ -16,7 +16,13 @@ public class Result {
     private int code;
     //响应提示信息
     private String message;
-//    //响应结果对象
-//    private Object data;
+    //响应结果对象
+    private Object data;
+
+    //构造带code和message的构造器，@AllArgsConstructor是构造带全参的构造器
+    public Result(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
 }

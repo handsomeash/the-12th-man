@@ -22,4 +22,10 @@ public interface UserService {
      * @return
      */
     public User findByEmail(String email);
+
+    /**
+     * 根据id查询用户
+     * @return
+     */
+    public User findById(Integer id);
 }

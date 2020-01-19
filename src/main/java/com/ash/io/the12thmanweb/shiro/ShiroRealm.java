@@ -55,8 +55,8 @@ public class ShiroRealm extends AuthorizingRealm {
             String realmName = this.getName();
             //salt: 盐值,用账号生成盐值
             ByteSource salt = ByteSource.Util.bytes(username);
-
-            SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(username, password, salt, realmName);
+            //这里的第一个参数，可以通过subject.getPrincipal()获取到
+            SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, password, salt, realmName);
 
             return info;
         } else {

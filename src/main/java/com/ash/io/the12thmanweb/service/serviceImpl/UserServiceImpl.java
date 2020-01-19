@@ -1,7 +1,6 @@
 package com.ash.io.the12thmanweb.service.serviceImpl;
 
 import com.ash.io.the12thmanweb.entity.User;
-import com.ash.io.the12thmanweb.mapper.UserMapper;
 import com.ash.io.the12thmanweb.repository.UserRepository;
 import com.ash.io.the12thmanweb.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,5 +32,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.selectByEmail(email);
+    }
+
+    @Override
+    public User findById(Integer id) {
+        return userRepository.selectById(id);
     }
 }
