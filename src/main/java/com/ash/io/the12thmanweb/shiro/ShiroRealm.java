@@ -43,7 +43,7 @@ public class ShiroRealm extends AuthorizingRealm {
 //        String username = token.getPrincipal().toString();
         UsernamePasswordToken loginToken = (UsernamePasswordToken) token;
         //通过账号找到用户
-        User user = userService.findByUsername(loginToken.getUsername());
+        User user = userService.getByUsername(loginToken.getUsername());
 
         // 如果用户存在，则校验密码
         if (user != null) {

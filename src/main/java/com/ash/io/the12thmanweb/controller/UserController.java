@@ -5,7 +5,6 @@ import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.result.Result;
 import com.ash.io.the12thmanweb.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -85,7 +84,7 @@ public class UserController {
         //判断账号是否被注册
         String username = user.getUsername();
         String password = user.getPassword();
-        User find = userService.findByUsername(username);
+        User find = userService.getByUsername(username);
         String message;
         if (find != null) {
             message = "用户已存在";
@@ -94,7 +93,7 @@ public class UserController {
         }
         //判断邮箱是否被注册
         String email = user.getEmail();
-        find = userService.findByEmail(email);
+        find = userService.getByEmail(email);
         if (find != null) {
             message = "邮箱已被注册";
             log.info("register:" + message);
@@ -110,7 +109,7 @@ public class UserController {
         String encodedPassword = new SimpleHash("md5", password, salt, hashTimes).toString();
         //设置加密后的密码
         user.setPassword(encodedPassword);
-        userService.save(user);
+        userService.register(user);
         message = "注册成功";
         log.info("register:" + message);
         return new Result(ResultCode.SUCCESS.getCode(), message);
@@ -132,21 +131,57 @@ public class UserController {
     }
 
     /**
-     * 用户个人空间信息
+     * 获取用户个人空间信息（包括用户关系表中的数据）
      *
      * @param userId
      * @return
      */
     @CrossOrigin
     @GetMapping("/user/{id}")
-    public Map<String, Object> toUserInfo(@PathVariable("id") Integer userId) {
+    public Map<String, Object> getUserHomeInfo(@PathVariable("id") Integer userId) {
         log.info("用户id：" + userId);
         Map<String, Object> map = new HashMap<>();
-        User user = userService.findById(userId);
-        if(user != null){
+        User user = userService.getById(userId);
+        if (user != null) {
             map.put("user", user);
         }
         return map;
+    }
+
+    /**
+     * 编辑页面获取用户个人信息
+     *
+     * @param userId
+     * @return
+     */
+    @CrossOrigin
+    @GetMapping("/edit/{id}")
+    public User getUserInfo(@PathVariable("id") Integer userId) {
+        User user = userService.getById(userId);
+        return user;
+    }
+
+    /**
+     * 用户修改个人信息
+     *
+     * @param user
+     * @return
+     */
+    @CrossOrigin
+    @PutMapping("/edit")
+    public Result editUserInfo(@RequestBody User user) {
+         User find =  userService.getByEmail(user.getEmail());
+        String message;
+        if(find != null){
+            message = "邮箱已被注册";
+            return new Result(ResultCode.FAIL.getCode(), message);
+        }else{
+            message = "修改成功";
+            log.info("logout:" + message);
+            userService.saveOrUpdate(user);
+            return new Result(ResultCode.SUCCESS.getCode(), message);
+        }
+
     }
 
 }
