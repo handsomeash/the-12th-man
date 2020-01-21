@@ -1,5 +1,6 @@
 package com.ash.io.the12thmanweb.controller;
 
+import com.ash.io.the12thmanweb.Utils.GeneratePasswordUtil;
 import com.ash.io.the12thmanweb.entity.User;
 import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.result.Result;
@@ -99,14 +100,8 @@ public class UserController {
             log.info("register:" + message);
             return new Result(ResultCode.FAIL.getCode(), message);
         }
-
-        //成功注册
-        // 设置 hash 算法迭代次数
-        int hashTimes = 1024;
-        //用账号生成盐值，因为账号是唯一的，所以盐值也是唯一的
-        ByteSource salt = ByteSource.Util.bytes(user.getUsername());
-        //加密后的密码
-        String encodedPassword = new SimpleHash("md5", password, salt, hashTimes).toString();
+        //成功注册，生成加密密码
+        String encodedPassword = GeneratePasswordUtil.GeneratePassword(username, password);
         //设置加密后的密码
         user.setPassword(encodedPassword);
         userService.register(user);
@@ -139,7 +134,7 @@ public class UserController {
     @CrossOrigin
     @GetMapping("/user/{id}")
     public Map<String, Object> getUserHomeInfo(@PathVariable("id") Integer userId) {
-        log.info("用户id：" + userId);
+        log.info("前往个人空间页面，用户id：" + userId);
         Map<String, Object> map = new HashMap<>();
         User user = userService.getById(userId);
         if (user != null) {
@@ -157,6 +152,7 @@ public class UserController {
     @CrossOrigin
     @GetMapping("/edit/{id}")
     public User getUserInfo(@PathVariable("id") Integer userId) {
+        log.info("前往编辑页面，用户id：" + userId);
         User user = userService.getById(userId);
         return user;
     }
@@ -170,18 +166,68 @@ public class UserController {
     @CrossOrigin
     @PutMapping("/edit")
     public Result editUserInfo(@RequestBody User user) {
-         User find =  userService.getByEmail(user.getEmail());
         String message;
-        if(find != null){
-            message = "邮箱已被注册";
+
+        User find = userService.getByEmail(user.getEmail());
+        //如果新的邮箱在数据库中存在，并且id不是该用户
+        if (find != null && find.getId() != user.getId()) {
+            message = "邮箱已被注册，修改失败";
+            log.info("editUserInfo:" + message);
             return new Result(ResultCode.FAIL.getCode(), message);
-        }else{
-            message = "修改成功";
-            log.info("logout:" + message);
-            userService.saveOrUpdate(user);
-            return new Result(ResultCode.SUCCESS.getCode(), message);
+        }
+        String phone = user.getPhone();
+        //先判断传过来的手机号如果是空，则不进行校验
+        if (phone != null) {
+            User find2 = userService.getByPhone(phone);
+            if (find2 != null && find.getId() != user.getId()) {
+                message = "手机号已被注册，修改失败";
+                log.info("editUserInfo:" + message);
+                return new Result(ResultCode.FAIL.getCode(), message);
+            }
         }
 
+        message = "个人信息修改成功";
+        log.info("editUserInfo:" + message);
+        userService.saveOrUpdate(user);
+        return new Result(ResultCode.SUCCESS.getCode(), message);
+
+    }
+
+    /**
+     * 用户修改密码
+     *
+     * @param map
+     * @return
+     */
+    @CrossOrigin
+    @PutMapping("/edit/password")
+//    public Result editUserPassword(Integer userId, String oldPassword, String newPassword) {
+    public Result editUserPassword(@RequestBody Map<String, String> map) {
+        int userId = Integer.parseInt(map.get("userId"));
+        String oldPassword = map.get("oldPassword");
+        String newPassword = map.get("newPassword");
+        User user = userService.getById(userId);
+        String username = user.getUsername();
+        String message;
+        //如果传递过来的旧密码和数据库的密码不一致
+        if (!GeneratePasswordUtil.GeneratePassword(username, oldPassword).equals(user.getPassword())) {
+            message = "旧密码不正确，修改失败";
+            log.info("editUserPassword:" + message);
+            return new Result(ResultCode.FAIL.getCode(), message);
+        }
+        //如果新密码与旧密码相同
+        else if (oldPassword.equals(newPassword)) {
+            message = "新密码与旧密码一致，修改失败";
+            log.info("editUserPassword:" + message);
+            return new Result(ResultCode.FAIL.getCode(), message);
+        } else {
+            String encodedPassword = GeneratePasswordUtil.GeneratePassword(username, newPassword);
+            user.setPassword(encodedPassword);
+            userService.saveOrUpdate(user);
+            message = "密码修改成功";
+            log.info("editUserPassword:" + message);
+            return new Result(ResultCode.SUCCESS.getCode(), message);
+        }
     }
 
 }
