@@ -1,11 +1,10 @@
-package com.ash.io.the12thmanweb.entity;
+package com.ash.io.the12thmanweb.entity.user;
 
 import com.ash.io.the12thmanweb.enums.GenderEnums;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 
@@ -15,7 +14,6 @@ import java.time.LocalDate;
  * @ Date    ：Created in 2020-01-16
  */
 @Data
-@Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends Model<User> {

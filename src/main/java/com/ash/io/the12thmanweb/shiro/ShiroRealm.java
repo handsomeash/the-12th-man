@@ -1,6 +1,6 @@
 package com.ash.io.the12thmanweb.shiro;
 
-import com.ash.io.the12thmanweb.entity.User;
+import com.ash.io.the12thmanweb.entity.user.User;
 import com.ash.io.the12thmanweb.service.UserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;

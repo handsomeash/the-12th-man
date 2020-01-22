@@ -1,6 +1,6 @@
 package com.ash.io.the12thmanweb.service;
 
-import com.ash.io.the12thmanweb.entity.User;
+import com.ash.io.the12thmanweb.entity.user.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface UserService extends IService<User> {

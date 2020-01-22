@@ -1,6 +1,8 @@
 package com.ash.io.the12thmanweb.service.serviceImpl;
 
-import com.ash.io.the12thmanweb.entity.User;
+import com.ash.io.the12thmanweb.entity.user.User;
+import com.ash.io.the12thmanweb.entity.user.UserDetail;
+import com.ash.io.the12thmanweb.mapper.UserDetailMapper;
 import com.ash.io.the12thmanweb.mapper.UserMapper;
 import com.ash.io.the12thmanweb.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -21,6 +23,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    UserDetailMapper userDetailMapper;
 
     @Override
     public boolean register(User user) {
@@ -29,7 +33,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setRegisterDate(now);
         //设置默认头像路径
         user.setPortraitUrl("../../../static/img/touxiang.png");
-        return userMapper.insert(user) > 0;
+        //插入用户数据
+        int result = userMapper.insert(user);
+        if (result > 0) {
+            //创建用户明细表数据
+            UserDetail userDetail = new UserDetail();
+            //设置用户id
+            userDetail.setUserId(user.getId());
+            userDetailMapper.insert(userDetail);
+        }
+        return result > 0;
     }
 
     @Override
@@ -55,7 +68,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = userMapper.selectOne(wrapper);
         return user;
     }
-
 
 
 }

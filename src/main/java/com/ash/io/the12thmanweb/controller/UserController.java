@@ -1,7 +1,7 @@
 package com.ash.io.the12thmanweb.controller;
 
 import com.ash.io.the12thmanweb.Utils.GeneratePasswordUtil;
-import com.ash.io.the12thmanweb.entity.User;
+import com.ash.io.the12thmanweb.entity.user.User;
 import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.result.Result;
 import com.ash.io.the12thmanweb.service.UserService;
@@ -10,9 +10,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -201,7 +199,6 @@ public class UserController {
      */
     @CrossOrigin
     @PutMapping("/edit/password")
-//    public Result editUserPassword(Integer userId, String oldPassword, String newPassword) {
     public Result editUserPassword(@RequestBody Map<String, String> map) {
         int userId = Integer.parseInt(map.get("userId"));
         String oldPassword = map.get("oldPassword");

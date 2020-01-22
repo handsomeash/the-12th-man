@@ -1,4 +1,4 @@
-package com.ash.io.the12thmanweb.configuration;
+package com.ash.io.the12thmanweb.config;
 
 import com.ash.io.the12thmanweb.shiro.ShiroFilter;
 import com.ash.io.the12thmanweb.shiro.ShiroRealm;
@@ -8,11 +8,6 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.servlet.Filter;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * shiro配置类
  *
@@ -20,7 +15,7 @@ import java.util.Map;
  * @ Date    ：Created in 2020-01-18
  */
 @Configuration
-public class ShiroConfiguration {
+public class ShiroConfig {
     @Bean
     public ShiroFilterFactoryBean shiroFilterFactory(DefaultWebSecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
