@@ -1,13 +1,19 @@
 package com.ash.io.the12thmanweb.service.serviceImpl;
 
 import com.ash.io.the12thmanweb.entity.article.Article;
+import com.ash.io.the12thmanweb.entity.article.ArticleDetail;
+import com.ash.io.the12thmanweb.entity.user.User;
+import com.ash.io.the12thmanweb.mapper.ArticleDetailMapper;
 import com.ash.io.the12thmanweb.mapper.ArticleMapper;
 import com.ash.io.the12thmanweb.service.ArticleService;
+import com.ash.io.the12thmanweb.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 /**
  * @ Author  ：FengYiJie
@@ -17,6 +23,11 @@ import org.springframework.stereotype.Service;
 public class ArticleServiceImpl implements ArticleService {
     @Autowired
     ArticleMapper articleMapper;
+    @Autowired
+    ArticleDetailMapper articleDetailMapper;
+
+    @Autowired
+    UserService userService;
 
     @Override
     public IPage<Article> getArticles(Integer PageIndex, Integer PageSize) {
@@ -27,6 +38,27 @@ public class ArticleServiceImpl implements ArticleService {
 
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<Article> page = new Page<>(PageIndex, PageSize);
-        return articleMapper.selectPage(page,wrapper);
+        return articleMapper.selectPage(page, wrapper);
+    }
+
+    @Override
+    public boolean writeArticle(Integer userId, ArticleDetail articleDetail) {
+        User user = userService.getById(userId);
+        LocalDate now = LocalDate.now();
+        articleDetail.setUserId(user.getId());
+        articleDetail.setCreateDate(now);
+        int insert = articleDetailMapper.insert(articleDetail);
+        if (insert > 0) {
+            Article article = new Article();
+            article.setArticleDetailId(articleDetail.getId());
+            article.setTitle(articleDetail.getTitle());
+            article.setUserId(user.getId());
+            article.setAuthor(user.getNickname());
+            article.setCreateDate(now);
+            article.setImgUrl(articleDetail.getImgUrl());
+            articleMapper.insert(article);
+        }
+
+        return insert > 0;
     }
 }
