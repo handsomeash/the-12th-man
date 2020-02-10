@@ -13,4 +13,6 @@ public interface ArticleService {
     IPage<Article> getArticles(Integer PageIndex, Integer PageSize);
 
     boolean writeArticle(Integer userId, ArticleDetail articleDetail);
+
+    ArticleDetail getArticleDetail(Integer id);
 }

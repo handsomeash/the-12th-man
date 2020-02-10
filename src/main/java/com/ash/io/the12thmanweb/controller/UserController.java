@@ -1,6 +1,6 @@
 package com.ash.io.the12thmanweb.controller;
 
-import com.ash.io.the12thmanweb.Utils.GeneratePasswordUtil;
+import com.ash.io.the12thmanweb.Utils.MyUtil;
 import com.ash.io.the12thmanweb.entity.user.User;
 import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.result.Result;
@@ -13,7 +13,10 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,7 +102,7 @@ public class UserController {
             return new Result(ResultCode.FAIL.getCode(), message);
         }
         //成功注册，生成加密密码
-        String encodedPassword = GeneratePasswordUtil.GeneratePassword(username, password);
+        String encodedPassword = MyUtil.GeneratePassword(username, password);
         //设置加密后的密码
         user.setPassword(encodedPassword);
         userService.register(user);
@@ -133,6 +136,7 @@ public class UserController {
     @GetMapping("/user/{id}")
     public Map<String, Object> getUserHomeInfo(@PathVariable("id") Integer userId) {
         log.info("前往个人空间页面，用户id：" + userId);
+
         Map<String, Object> map = new HashMap<>();
         User user = userService.getById(userId);
         if (user != null) {
@@ -184,9 +188,23 @@ public class UserController {
             }
         }
 
+        Subject subject = SecurityUtils.getSubject();
+        log.info("用户修改个人信息的subject：" + subject.getPrincipal().toString());
+
+        //考虑到用户修改头像后，localStorage中的头像未改变，因此要传递其的路径
+        String portraitUrl = ((User) subject.getPrincipal()).getPortraitUrl();
+
         message = "个人信息修改成功";
         log.info("editUserInfo:" + message);
         userService.saveOrUpdate(user);
+
+        if (!user.getPortraitUrl().equals(portraitUrl)) {
+            log.info("修改头像，url：" + user.getPortraitUrl());
+            User data = new User();
+            data.setId(user.getId());
+            data.setPortraitUrl(user.getPortraitUrl());
+            return new Result(ResultCode.SUCCESS.getCode(), message, data);
+        }
         return new Result(ResultCode.SUCCESS.getCode(), message);
 
     }
@@ -207,7 +225,7 @@ public class UserController {
         String username = user.getUsername();
         String message;
         //如果传递过来的旧密码和数据库的密码不一致
-        if (!GeneratePasswordUtil.GeneratePassword(username, oldPassword).equals(user.getPassword())) {
+        if (!MyUtil.GeneratePassword(username, oldPassword).equals(user.getPassword())) {
             message = "旧密码不正确，修改失败";
             log.info("editUserPassword:" + message);
             return new Result(ResultCode.FAIL.getCode(), message);
@@ -218,7 +236,7 @@ public class UserController {
             log.info("editUserPassword:" + message);
             return new Result(ResultCode.FAIL.getCode(), message);
         } else {
-            String encodedPassword = GeneratePasswordUtil.GeneratePassword(username, newPassword);
+            String encodedPassword = MyUtil.GeneratePassword(username, newPassword);
             user.setPassword(encodedPassword);
             userService.saveOrUpdate(user);
             message = "密码修改成功";
@@ -226,5 +244,31 @@ public class UserController {
             return new Result(ResultCode.SUCCESS.getCode(), message);
         }
     }
+
+    /**
+     * 用户上传头像
+     *
+     * @param file
+     * @return
+     */
+    @CrossOrigin
+    @PostMapping("/editPortrait")
+    public String editPortrait(MultipartFile file) {
+        String folder = "D:/workspace/img";
+        File imageFolder = new File(folder);
+        File f = new File(imageFolder, MyUtil.getRandomString(5)
+                + file.getOriginalFilename().substring(file.getOriginalFilename().length() - 4));
+        if (!f.getParentFile().exists())
+            f.getParentFile().mkdirs();
+        try {
+            file.transferTo(f);
+            String imgURL = "http://localhost:8443/api/file/" + f.getName();
+            return imgURL;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
 
 }

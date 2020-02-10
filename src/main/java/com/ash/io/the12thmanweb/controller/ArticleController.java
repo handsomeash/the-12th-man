@@ -1,16 +1,21 @@
 package com.ash.io.the12thmanweb.controller;
 
+import com.ash.io.the12thmanweb.Utils.MyUtil;
 import com.ash.io.the12thmanweb.entity.article.Article;
 import com.ash.io.the12thmanweb.entity.article.ArticleDetail;
 import com.ash.io.the12thmanweb.entity.user.User;
 import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.result.Result;
 import com.ash.io.the12thmanweb.service.ArticleService;
+import com.ash.io.the12thmanweb.service.UserService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +30,8 @@ import java.util.Map;
 public class ArticleController {
     @Autowired
     ArticleService articleService;
+    @Autowired
+    UserService userService;
 
     /**
      * 分页获取所有文章信息
@@ -55,8 +62,15 @@ public class ArticleController {
      */
     @CrossOrigin
     @GetMapping("/article/{id}")
-    public Article getArticle(@PathVariable("id") Integer id) {
-        return null;
+    public Map<String, Object> getArticle(@PathVariable("id") Integer id) {
+        log.info("前往文章页面，文章id：" + id);
+
+        Map<String, Object> map = new HashMap<>();
+        ArticleDetail article = articleService.getArticleDetail(id);
+        User author = userService.getById(article.getUserId());
+        map.put("author",author);
+        map.put("article",article);
+        return map;
     }
 
     /**
@@ -71,17 +85,40 @@ public class ArticleController {
         log.info(map.toString());
         int userId = Integer.parseInt(map.get("userid"));
         String content = map.get("content");
-        String title =  map.get("title");
-        String imgURL =  map.get("imgurl");
+        String title = map.get("title");
+        String imgURL = map.get("imgurl");
         ArticleDetail articleDetail = new ArticleDetail();
         articleDetail.setTitle(title);
         articleDetail.setContent(content);
         articleDetail.setImgUrl(imgURL);
-        articleService.writeArticle(userId,articleDetail);
+        articleService.writeArticle(userId, articleDetail);
         String message;
-        message="发表成功";
-        return new Result(ResultCode.SUCCESS.getCode(),message);
+        message = "发表成功";
+        return new Result(ResultCode.SUCCESS.getCode(), message);
     }
 
+    /**
+     * 上传封面
+     * @param file
+     * @return
+     */
+    @CrossOrigin
+    @PostMapping("/cover")
+    public String edit(MultipartFile file) {
+        String folder = "D:/workspace/img";
+        File imageFolder = new File(folder);
+        File f = new File(imageFolder, MyUtil.getRandomString(5)
+                + file.getOriginalFilename().substring(file.getOriginalFilename().length() - 4));
+        if (!f.getParentFile().exists())
+            f.getParentFile().mkdirs();
+        try {
+            file.transferTo(f);
+            String imgURL = "http://localhost:8443/api/file/" + f.getName();
+            return imgURL;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 
 }

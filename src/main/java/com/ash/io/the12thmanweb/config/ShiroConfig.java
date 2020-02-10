@@ -8,6 +8,11 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.Filter;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * shiro配置类
  *
@@ -25,6 +30,17 @@ public class ShiroConfig {
 //        Map<String, Filter> customizedFilter = new HashMap<>();
 //        // 设置自定义过滤器名称为 url
 //        customizedFilter.put("url", getShiroFilter());
+
+//        filterChainDefinitionMap.put("/api/authentication", "authc");
+//        filterChainDefinitionMap.put("/api/menu", "authc");
+//        filterChainDefinitionMap.put("/api/admin/**", "authc");
+//        // 对管理接口的访问启用自定义拦截（url 规则），即执行 ShiroFilter 中定义的过滤方法
+//        filterChainDefinitionMap.put("/api/**", "url");
+
+        // 启用自定义过滤器
+//        shiroFilterFactoryBean.setFilters(customizedFilter);
+//        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+
         return shiroFilterFactoryBean;
     }
 

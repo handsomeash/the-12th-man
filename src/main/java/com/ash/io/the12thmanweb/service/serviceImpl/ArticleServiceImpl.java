@@ -10,6 +10,7 @@ import com.ash.io.the12thmanweb.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ import java.time.LocalDate;
  * @ Date    ：Created in 2020-01-22
  */
 @Service
-public class ArticleServiceImpl implements ArticleService {
+public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
     @Autowired
     ArticleMapper articleMapper;
     @Autowired
@@ -60,5 +61,11 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return insert > 0;
+    }
+
+    @Override
+    public ArticleDetail getArticleDetail(Integer id) {
+        ArticleDetail article = articleDetailMapper.selectById(id);
+        return article;
     }
 }
