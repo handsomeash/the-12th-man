@@ -38,7 +38,6 @@ public class ArticleController {
      *
      * @return
      */
-    @CrossOrigin
     @PostMapping("/article")
     public Map<String, Object> listArticle(@RequestBody Map<String, Integer> map) {
         Integer PageIndex = map.get("current");
@@ -60,7 +59,6 @@ public class ArticleController {
      * @param id
      * @return
      */
-    @CrossOrigin
     @GetMapping("/article/{id}")
     public Map<String, Object> getArticle(@PathVariable("id") Integer id) {
         log.info("前往文章页面，文章id：" + id);
@@ -79,8 +77,7 @@ public class ArticleController {
      * @param map
      * @return
      */
-    @CrossOrigin
-    @PostMapping("/article/write")
+    @PostMapping("/write")
     public Result writeArticle(@RequestBody Map<String, String> map) {
         log.info(map.toString());
         int userId = Integer.parseInt(map.get("userid"));
@@ -102,7 +99,6 @@ public class ArticleController {
      * @param file
      * @return
      */
-    @CrossOrigin
     @PostMapping("/cover")
     public String edit(MultipartFile file) {
         String folder = "D:/workspace/img";

@@ -35,20 +35,26 @@ public class UserController {
     /**
      * 用户登陆
      *
-     * @param user
+     * @param map
      * @return
      */
-    @CrossOrigin
     @PostMapping(value = "/login")
-    public Result login(@RequestBody User user) {
-        String username = user.getUsername();
-        String password = user.getPassword();
+//    public Result login(@RequestBody User user) {
+    public Result login(@RequestBody Map<String, Object> map) {
+
+        String username = (String) map.get("username");
+        String password = (String) map.get("password");
+        boolean rememberMe = (boolean) map.get("rememberme");
         String message;
         // 使用shiro编写认证操作
         // 1.获取subject
         Subject subject = SecurityUtils.getSubject();
         // 2.封装用户数据
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        if (rememberMe) {
+            token.setRememberMe(true);
+        }
+
         // 3.执行登陆认证
         try {
             // 执行subject.login(token);跳到UserRealm里
@@ -80,7 +86,6 @@ public class UserController {
      * @param user
      * @return
      */
-    @CrossOrigin
     @PostMapping(value = "/register")
     public Result register(@RequestBody User user) {
         //判断账号是否被注册
@@ -116,7 +121,6 @@ public class UserController {
      *
      * @return
      */
-    @CrossOrigin
     @GetMapping("/logout")
     public Result logout() {
         Subject subject = SecurityUtils.getSubject();
@@ -132,7 +136,6 @@ public class UserController {
      * @param userId
      * @return
      */
-    @CrossOrigin
     @GetMapping("/user/{id}")
     public Map<String, Object> getUserHomeInfo(@PathVariable("id") Integer userId) {
         log.info("前往个人空间页面，用户id：" + userId);
@@ -151,8 +154,7 @@ public class UserController {
      * @param userId
      * @return
      */
-    @CrossOrigin
-    @GetMapping("/edit/{id}")
+    @GetMapping("/user/edit/{id}")
     public User getUserInfo(@PathVariable("id") Integer userId) {
         log.info("前往编辑页面，用户id：" + userId);
         User user = userService.getById(userId);
@@ -165,8 +167,7 @@ public class UserController {
      * @param user
      * @return
      */
-    @CrossOrigin
-    @PutMapping("/edit")
+    @PutMapping("/user/edit")
     public Result editUserInfo(@RequestBody User user) {
         String message;
 
@@ -215,8 +216,7 @@ public class UserController {
      * @param map
      * @return
      */
-    @CrossOrigin
-    @PutMapping("/edit/password")
+    @PutMapping("/user/edit/password")
     public Result editUserPassword(@RequestBody Map<String, String> map) {
         int userId = Integer.parseInt(map.get("userId"));
         String oldPassword = map.get("oldPassword");
@@ -251,8 +251,7 @@ public class UserController {
      * @param file
      * @return
      */
-    @CrossOrigin
-    @PostMapping("/editPortrait")
+    @PostMapping("/user/editPortrait")
     public String editPortrait(MultipartFile file) {
         String folder = "D:/workspace/img";
         File imageFolder = new File(folder);
@@ -270,5 +269,36 @@ public class UserController {
         }
     }
 
+    /**
+     * 判断用户是否是通过记住我登陆的，如果是，则将用户的信息发送给前端，便于存储在sessionStorage中
+     */
+    @GetMapping("/isRememberMe")
+    public Result isRememberMe(){
+        Subject subject = SecurityUtils.getSubject();
+        log.info("isRememberMe：" + subject.isRemembered());
+        String message = "通过记住我登陆";
+        if(subject.isRemembered()){
+            User data = new User();
+            data.setId(((User) subject.getPrincipal()).getId());
+            data.setPortraitUrl(((User) subject.getPrincipal()).getPortraitUrl());
+            return new Result(ResultCode.SUCCESS.getCode(), message, data);
+        }
+        return null;
+    }
 
+//    @CrossOrigin
+//    @GetMapping("/authentication")
+//    public Result authentication() {
+//        Subject subject = SecurityUtils.getSubject();
+//        String message;
+//        if (subject.getPrincipal() == null) {
+//            message = "身份认证失败";
+//            log.info(message);
+//            return new Result(ResultCode.FAIL.getCode(), message);
+//        } else {
+//            message = "身份认证成功";
+//            log.info(message);
+//            return new Result(ResultCode.SUCCESS.getCode(), message);
+//        }
+//    }
 }

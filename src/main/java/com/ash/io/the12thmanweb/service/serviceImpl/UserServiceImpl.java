@@ -69,5 +69,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return user;
     }
 
+    @Override
+    public UserDetail getByUserId(Integer userId) {
+        QueryWrapper<UserDetail> wrapper = new QueryWrapper<>();
+        wrapper.eq("userId", userId);
+        UserDetail userDetail = userDetailMapper.selectOne(wrapper);
+        return userDetail;
+    }
+
 
 }

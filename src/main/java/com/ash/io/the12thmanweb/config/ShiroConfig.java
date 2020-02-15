@@ -3,8 +3,11 @@ package com.ash.io.the12thmanweb.config;
 import com.ash.io.the12thmanweb.shiro.ShiroFilter;
 import com.ash.io.the12thmanweb.shiro.ShiroRealm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,20 +29,23 @@ public class ShiroConfig {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
-//        Map<String, String > filterChainDefinitionMap = new LinkedHashMap<String, String>();
+        //拦截器
+        Map<String, String > filterMap = new LinkedHashMap<String, String>();
+        //自定义过滤器
 //        Map<String, Filter> customizedFilter = new HashMap<>();
-//        // 设置自定义过滤器名称为 url
+        // 设置自定义过滤器名称为 url
 //        customizedFilter.put("url", getShiroFilter());
 
-//        filterChainDefinitionMap.put("/api/authentication", "authc");
-//        filterChainDefinitionMap.put("/api/menu", "authc");
-//        filterChainDefinitionMap.put("/api/admin/**", "authc");
-//        // 对管理接口的访问启用自定义拦截（url 规则），即执行 ShiroFilter 中定义的过滤方法
-//        filterChainDefinitionMap.put("/api/**", "url");
+        filterMap.put("/api/login", "anon");
+        filterMap.put("/api/register", "anon");
+        filterMap.put("/api/article/**","anon");
+        // 对管理接口的访问启用自定义拦截（url 规则），即执行 ShiroFilter 中定义的过滤方法
 
+
+//
         // 启用自定义过滤器
 //        shiroFilterFactoryBean.setFilters(customizedFilter);
-//        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
 
         return shiroFilterFactoryBean;
     }
@@ -52,6 +58,8 @@ public class ShiroConfig {
     public DefaultWebSecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(shiroRealm());
+        //注入Cookie(记住我)管理器(remenberMeManager)
+        securityManager.setRememberMeManager(rememberMeManager());
         return securityManager;
     }
 
@@ -63,14 +71,16 @@ public class ShiroConfig {
         return shiroRealm;
     }
 
+
+
     /**
      * 增加获取过滤器的方法，注意这里不能使用 @Bean
      * 这个也是过滤器，ShiroFilterFactoryBean 也是过滤器，当他们都出现的时候，默认的什么 anno,authc 过滤器就失效了。
      * @return
      */
-    public ShiroFilter getShiroFilter(){
-        return new ShiroFilter();
-    }
+//    public ShiroFilter getShiroFilter(){
+//        return new ShiroFilter();
+//    }
 
     /**
      * 密码校验规则HashedCredentialsMatcher
@@ -89,5 +99,26 @@ public class ShiroConfig {
         //storedCredentialsHexEncoded默认是true，此时用的是密码加密用的是Hex编码；false时用Base64编码
         //credentialsMatcher.setStoredCredentialsHexEncoded(true);
         return credentialsMatcher;
+    }
+
+    @Bean
+    public CookieRememberMeManager rememberMeManager() {
+        CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
+        cookieRememberMeManager.setCookie(rememberMeCookie());
+        //rememberme cookie加密的密钥
+        cookieRememberMeManager.setCipherKey(Base64.decode("4AvVhmFLUs0KTA3Kprsdag=="));
+        return cookieRememberMeManager;
+    }
+
+    /**
+     * 记住我相关配置
+     * @return
+     */
+    @Bean
+    public SimpleCookie rememberMeCookie() {
+        SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
+        //记住我的有效期，设置为一周
+        simpleCookie.setMaxAge(604800);
+        return simpleCookie;
     }
 }
