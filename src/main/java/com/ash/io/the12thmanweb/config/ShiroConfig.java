@@ -38,7 +38,7 @@ public class ShiroConfig {
 
         filterMap.put("/api/login", "anon");
         filterMap.put("/api/register", "anon");
-        filterMap.put("/api/article/**","anon");
+//        filterMap.put("/api/article/**","anon");
         // 对管理接口的访问启用自定义拦截（url 规则），即执行 ShiroFilter 中定义的过滤方法
 
 

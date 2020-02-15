@@ -66,8 +66,8 @@ public class ArticleController {
         Map<String, Object> map = new HashMap<>();
         ArticleDetail article = articleService.getArticleDetail(id);
         User author = userService.getById(article.getUserId());
-        map.put("author",author);
-        map.put("article",article);
+        map.put("author", author);
+        map.put("article", article);
         return map;
     }
 
@@ -95,7 +95,32 @@ public class ArticleController {
     }
 
     /**
+     * 用户收藏文章
+     *
+     * @param map
+     * @return
+     */
+    @PutMapping("/article/collect")
+    public Result collectArticle(@RequestBody Map<String, Integer> map) {
+        Integer userId = map.get("userId");
+        //传过来的id其实是articleDetail的id
+        Integer articleId = map.get("articleId");
+        log.info("userId:"+userId);
+        log.info("articleId:"+articleId);
+        boolean success = articleService.collectArticle(userId, articleId);
+        String message;
+        if (success) {
+            message = "收藏成功";
+            return new Result(ResultCode.SUCCESS.getCode(), message);
+        } else {
+            message = "已经收藏";
+            return new Result(ResultCode.FAIL.getCode(), message);
+        }
+    }
+
+    /**
      * 上传封面
+     *
      * @param file
      * @return
      */

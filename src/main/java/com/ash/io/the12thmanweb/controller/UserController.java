@@ -2,6 +2,7 @@ package com.ash.io.the12thmanweb.controller;
 
 import com.ash.io.the12thmanweb.Utils.MyUtil;
 import com.ash.io.the12thmanweb.entity.user.User;
+import com.ash.io.the12thmanweb.entity.user.UserDetail;
 import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.result.Result;
 import com.ash.io.the12thmanweb.service.UserService;
@@ -142,8 +143,10 @@ public class UserController {
 
         Map<String, Object> map = new HashMap<>();
         User user = userService.getById(userId);
+        UserDetail userDetail = userService.getDetailByUserId(user.getId());
         if (user != null) {
             map.put("user", user);
+            map.put("userDetail",userDetail);
         }
         return map;
     }
