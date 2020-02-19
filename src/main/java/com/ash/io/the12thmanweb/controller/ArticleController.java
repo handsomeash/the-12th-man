@@ -39,7 +39,7 @@ public class ArticleController {
      * @return
      */
     @PostMapping("/article")
-    public Map<String, Object> listArticle(@RequestBody Map<String, Integer> map) {
+    public Map<String, Object> listArticles(@RequestBody Map<String, Integer> map) {
         Integer PageIndex = map.get("current");
         Integer PageSize = map.get("pagesize");
         log.info("查询页数：" + PageIndex + "查询数据条数：" + PageSize);
@@ -105,8 +105,8 @@ public class ArticleController {
         Integer userId = map.get("userId");
         //传过来的id其实是articleDetail的id
         Integer articleId = map.get("articleId");
-        log.info("userId:"+userId);
-        log.info("articleId:"+articleId);
+        log.info("userId:" + userId);
+        log.info("articleId:" + articleId);
         boolean success = articleService.collectArticle(userId, articleId);
         String message;
         if (success) {
@@ -116,6 +116,57 @@ public class ArticleController {
             message = "已经收藏";
             return new Result(ResultCode.FAIL.getCode(), message);
         }
+    }
+
+    /**
+     * 用户取消收藏
+     *
+     * @param map
+     * @return
+     */
+    @PostMapping("/article/cancelCollect")
+    public Result cancelCollectArticle(@RequestBody Map<String, Integer> map) {
+        Integer userId = map.get("userId");
+        //传过来的id其实是articleDetail的id
+        Integer articleId = map.get("articleId");
+        log.info("userId:" + userId);
+        log.info("articleId:" + articleId);
+        boolean success = articleService.cancelCollectArticle(userId, articleId);
+        String message;
+        if (success) {
+            message = "取消收藏成功";
+            return new Result(ResultCode.SUCCESS.getCode(), message);
+        } else {
+            message = "取消收藏失败";
+            return new Result(ResultCode.FAIL.getCode(), message);
+        }
+    }
+
+    /**
+     * 分页获取收藏的文章信息
+     *
+     * @return
+     */
+    @PostMapping("/article/collection")
+    public Map<String, Object> listCollectionArticles(@RequestBody Map<String, Integer> map) {
+        //分页信息
+        Integer PageIndex = map.get("current");
+        Integer PageSize = map.get("pagesize");
+        //用户信息
+        Integer userId = map.get("userId");
+        log.info("查询页数：" + PageIndex + "查询数据条数：" + PageSize);
+        IPage<Article> articles = articleService.getCollectionArticles(PageIndex, PageSize, userId);
+        //如果用户没有收藏过文章
+        if (articles == null) {
+            return null;
+        }
+        //获取总条数
+        long total = articles.getTotal();
+        List<Article> records = articles.getRecords();
+        Map<String, Object> result = new HashMap<>();
+        result.put("records", records);
+        result.put("total", total);
+        return result;
     }
 
     /**

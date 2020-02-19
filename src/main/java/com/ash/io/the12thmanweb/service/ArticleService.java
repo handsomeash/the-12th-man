@@ -43,4 +43,21 @@ public interface ArticleService {
      * @return
      */
     boolean collectArticle(Integer userId, Integer articleId);
+
+    /**
+     * 取消收藏
+     * @param userId
+     * @param articleId
+     * @return
+     */
+    boolean cancelCollectArticle(Integer userId, Integer articleId);
+
+    /**
+     * 分页查询用户收藏文章
+     * @param PageIndex
+     * @param PageSize
+     * @param userId
+     * @return
+     */
+    IPage<Article> getCollectionArticles(Integer PageIndex, Integer PageSize,Integer userId);
 }
