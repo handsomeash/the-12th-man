@@ -13,7 +13,9 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ import java.util.List;
  * @ Author  ：FengYiJie
  * @ Date    ：Created in 2020-01-22
  */
+@Slf4j
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
     @Autowired
@@ -34,7 +37,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     UserService userService;
 
     @Override
+    @Cacheable(value = "articles", key = "#PageIndex")
     public IPage<Article> getArticles(Integer PageIndex, Integer PageSize) {
+        log.info("通过数据库查询所有文章");
         //设置查询条件
         QueryWrapper<Article> wrapper = new QueryWrapper();
         //按时间倒序查询
@@ -67,7 +72,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
+    @Cacheable(value = "article", key = "#id")
     public ArticleDetail getArticleDetail(Integer id) {
+        log.info("通过数据库查询id为：" + id + "的文章");
         ArticleDetail article = articleDetailMapper.selectById(id);
         return article;
     }
@@ -127,4 +134,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Page<Article> page = new Page<>(PageIndex, PageSize);
         return articleMapper.selectPage(page, wrapper);
     }
+
+
 }

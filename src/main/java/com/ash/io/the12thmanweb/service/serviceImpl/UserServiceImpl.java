@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -77,6 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Cacheable(value = "userDetail", key = "#userId")
     public UserDetail getDetailByUserId(Integer userId) {
         QueryWrapper<UserDetail> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
@@ -135,6 +137,4 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         });
         return result;
     }
-
-
 }
