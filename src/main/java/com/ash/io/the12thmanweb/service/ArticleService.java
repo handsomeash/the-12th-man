@@ -3,12 +3,13 @@ package com.ash.io.the12thmanweb.service;
 import com.ash.io.the12thmanweb.entity.article.Article;
 import com.ash.io.the12thmanweb.entity.article.ArticleDetail;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * @ Author  ：FengYiJie
  * @ Date    ：Created in 2020-01-22
  */
-public interface ArticleService {
+public interface ArticleService extends IService<Article> {
     /**
      * 分页查询所有文章
      *

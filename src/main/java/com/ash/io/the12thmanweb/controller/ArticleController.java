@@ -29,9 +29,9 @@ import java.util.Map;
 @RequestMapping("api")
 public class ArticleController {
     @Autowired
-    ArticleService articleService;
+    private ArticleService articleService;
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     /**
      * 分页获取所有文章信息
@@ -89,8 +89,7 @@ public class ArticleController {
         articleDetail.setContent(content);
         articleDetail.setImgUrl(imgURL);
         articleService.writeArticle(userId, articleDetail);
-        String message;
-        message = "发表成功";
+        String message = "发表成功";
         return new Result(ResultCode.SUCCESS.getCode(), message);
     }
 

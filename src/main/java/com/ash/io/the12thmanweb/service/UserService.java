@@ -1,7 +1,6 @@
 package com.ash.io.the12thmanweb.service;
 
 import com.ash.io.the12thmanweb.entity.user.User;
-import com.ash.io.the12thmanweb.entity.user.UserCollection;
 import com.ash.io.the12thmanweb.entity.user.UserDetail;
 import com.baomidou.mybatisplus.extension.service.IService;
 
