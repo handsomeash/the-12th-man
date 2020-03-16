@@ -1,10 +1,12 @@
 package com.ash.io.the12thmanweb.controller;
 
 import com.ash.io.the12thmanweb.Utils.MyUtil;
+import com.ash.io.the12thmanweb.converter.ArticleConverter;
 import com.ash.io.the12thmanweb.entity.article.Article;
 import com.ash.io.the12thmanweb.entity.article.ArticleDetail;
 import com.ash.io.the12thmanweb.entity.user.User;
 import com.ash.io.the12thmanweb.enums.ResultCode;
+import com.ash.io.the12thmanweb.response.ArticleDetailResp;
 import com.ash.io.the12thmanweb.result.Result;
 import com.ash.io.the12thmanweb.service.ArticleService;
 import com.ash.io.the12thmanweb.service.UserService;
@@ -60,15 +62,13 @@ public class ArticleController {
      * @return
      */
     @GetMapping("/article/{id}")
-    public Map<String, Object> getArticle(@PathVariable("id") Integer id) {
+    public ArticleDetailResp getArticle(@PathVariable("id") Integer id) {
         log.info("前往文章页面，文章id：" + id);
 
-        Map<String, Object> map = new HashMap<>();
         ArticleDetail article = articleService.getArticleDetail(id);
         User author = userService.getById(article.getUserId());
-        map.put("author", author);
-        map.put("article", article);
-        return map;
+        ArticleDetailResp resp = ArticleConverter.converter(article, author);
+        return  resp;
     }
 
     /**

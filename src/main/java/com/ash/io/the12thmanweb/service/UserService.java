@@ -13,7 +13,7 @@ public interface UserService extends IService<User> {
      * @param user
      * @return
      */
-    boolean register(User user);
+    User register(User user);
 
     /**
      * 根据账号查询用户
@@ -39,13 +39,7 @@ public interface UserService extends IService<User> {
      */
     User getByPhone(String phone);
 
-    /**
-     * 根据用户id查找用户明细
-     *
-     * @param userId
-     * @return
-     */
-    UserDetail getDetailByUserId(Integer userId);
+
 
     /**
      * 收藏文章

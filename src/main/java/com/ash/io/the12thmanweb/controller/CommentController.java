@@ -47,7 +47,7 @@ public class CommentController {
     }
 
     /**
-     * 获取所有该文章下的评论
+     * 获取所有该文章下的评论以及评论者的信息
      *
      * @param id
      * @return

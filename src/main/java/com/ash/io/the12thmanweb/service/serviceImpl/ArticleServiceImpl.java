@@ -3,7 +3,6 @@ package com.ash.io.the12thmanweb.service.serviceImpl;
 import com.ash.io.the12thmanweb.entity.article.Article;
 import com.ash.io.the12thmanweb.entity.article.ArticleDetail;
 import com.ash.io.the12thmanweb.entity.user.User;
-import com.ash.io.the12thmanweb.entity.user.UserCollection;
 import com.ash.io.the12thmanweb.mapper.ArticleDetailMapper;
 import com.ash.io.the12thmanweb.mapper.ArticleMapper;
 import com.ash.io.the12thmanweb.service.ArticleService;
@@ -29,12 +28,12 @@ import java.util.List;
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
     @Autowired
-    ArticleMapper articleMapper;
+    private ArticleMapper articleMapper;
     @Autowired
-    ArticleDetailMapper articleDetailMapper;
+    private ArticleDetailMapper articleDetailMapper;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Override
     @Cacheable(value = "articles", key = "#PageIndex")

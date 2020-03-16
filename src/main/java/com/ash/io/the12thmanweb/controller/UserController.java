@@ -1,10 +1,13 @@
 package com.ash.io.the12thmanweb.controller;
 
 import com.ash.io.the12thmanweb.Utils.MyUtil;
+import com.ash.io.the12thmanweb.converter.UserConverter;
 import com.ash.io.the12thmanweb.entity.user.User;
 import com.ash.io.the12thmanweb.entity.user.UserDetail;
 import com.ash.io.the12thmanweb.enums.ResultCode;
+import com.ash.io.the12thmanweb.response.UserResp;
 import com.ash.io.the12thmanweb.result.Result;
+import com.ash.io.the12thmanweb.service.UserDetailService;
 import com.ash.io.the12thmanweb.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -32,6 +35,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserDetailService userDetailService;
 
     /**
      * 用户登陆
@@ -138,17 +144,20 @@ public class UserController {
      * @return
      */
     @GetMapping("/user/{id}")
-    public Map<String, Object> getUserHomeInfo(@PathVariable("id") Integer userId) {
+    public UserResp getUserHomeInfo(@PathVariable("id") Integer userId) {
         log.info("前往个人空间页面，用户id：" + userId);
 
-        Map<String, Object> map = new HashMap<>();
         User user = userService.getById(userId);
-        UserDetail userDetail = userService.getDetailByUserId(user.getId());
-        if (user != null) {
-            map.put("user", user);
-            map.put("userDetail",userDetail);
+        UserDetail userDetail = userDetailService.getDetailByUserId(user.getId());
+        if (user != null && userDetail != null) {
+            log.info("收藏的文章数："+userDetail.getCollectionNum());
+            UserResp resp = UserConverter.converter(user, userDetail);
+            return resp;
+        }else{
+            log.error("用户信息不存在");
+            return null;
         }
-        return map;
+
     }
 
     /**

@@ -3,12 +3,12 @@ package com.ash.io.the12thmanweb.service.serviceImpl;
 import com.ash.io.the12thmanweb.entity.user.User;
 import com.ash.io.the12thmanweb.entity.user.UserCollection;
 import com.ash.io.the12thmanweb.entity.user.UserDetail;
+import com.ash.io.the12thmanweb.enums.CalculationEnums;
 import com.ash.io.the12thmanweb.mapper.UserCollectionMapper;
-import com.ash.io.the12thmanweb.mapper.UserDetailMapper;
 import com.ash.io.the12thmanweb.mapper.UserMapper;
+import com.ash.io.the12thmanweb.service.UserDetailService;
 import com.ash.io.the12thmanweb.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +28,16 @@ import java.util.List;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Autowired
-    UserMapper userMapper;
+    private UserDetailService userDetailService;
+
     @Autowired
-    UserDetailMapper userDetailMapper;
+    private UserMapper userMapper;
+
     @Autowired
-    UserCollectionMapper userCollectionMapper;
+    private UserCollectionMapper userCollectionMapper;
 
     @Override
-    public boolean register(User user) {
+    public User register(User user) {
         LocalDate now = LocalDate.now();
         //设置创建时间
         user.setRegisterDate(now);
@@ -43,14 +45,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPortraitUrl("../../../static/img/touxiang.png");
         //插入用户数据
         int result = userMapper.insert(user);
+        //插入用户明细数据
         if (result > 0) {
             //创建用户明细表数据
             UserDetail userDetail = new UserDetail();
             //设置用户id
             userDetail.setUserId(user.getId());
-            userDetailMapper.insert(userDetail);
+            userDetailService.save(userDetail);
         }
-        return result > 0;
+        return user;
     }
 
     @Override
@@ -77,14 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return user;
     }
 
-    @Override
-    @Cacheable(value = "userDetail", key = "#userId")
-    public UserDetail getDetailByUserId(Integer userId) {
-        QueryWrapper<UserDetail> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id", userId);
-        UserDetail userDetail = userDetailMapper.selectOne(wrapper);
-        return userDetail;
-    }
+
 
     @Override
     public boolean collectArticle(Integer userId, Integer articleId) {
@@ -102,13 +98,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userCollection.setArticleId(articleId);
         userCollection.setUserId(userId);
         int insert = userCollectionMapper.insert(userCollection);
-
-        //用户明细表收藏文章数 字段+1
-        UserDetail userDetail = getDetailByUserId(userId);
-        userDetail.setCollectionNum(userDetail.getCollectionNum() + 1);
-        UpdateWrapper<UserDetail> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", userDetail.getId());
-        userDetailMapper.update(userDetail, updateWrapper);
+        //更新用户明细表的数据，收藏文章数 字段+1
+        userDetailService.collectArticle(userId, CalculationEnums.ADD);
         return insert > 0;
     }
 
@@ -118,11 +109,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.eq("user_id", userId).eq("article_id", articleId);
         int delete = userCollectionMapper.delete(wrapper);
         //用户明细表收藏文章数 字段-1
-        UserDetail userDetail = getDetailByUserId(userId);
-        userDetail.setCollectionNum(userDetail.getCollectionNum() - 1);
-        UpdateWrapper<UserDetail> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", userDetail.getId());
-        userDetailMapper.update(userDetail, updateWrapper);
+        userDetailService.collectArticle(userId, CalculationEnums.DELETE);
         return delete > 0;
     }
 
