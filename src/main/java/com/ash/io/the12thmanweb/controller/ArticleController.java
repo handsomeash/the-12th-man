@@ -8,6 +8,7 @@ import com.ash.io.the12thmanweb.entity.user.User;
 import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.response.ArticleDetailResp;
 import com.ash.io.the12thmanweb.result.Result;
+import com.ash.io.the12thmanweb.service.ArticleDetailService;
 import com.ash.io.the12thmanweb.service.ArticleService;
 import com.ash.io.the12thmanweb.service.UserService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -32,6 +33,8 @@ import java.util.Map;
 public class ArticleController {
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private ArticleDetailService articleDetailService;
     @Autowired
     private UserService userService;
 
@@ -65,7 +68,7 @@ public class ArticleController {
     public ArticleDetailResp getArticle(@PathVariable("id") Integer id) {
         log.info("前往文章页面，文章id：" + id);
 
-        ArticleDetail article = articleService.getArticleDetail(id);
+        ArticleDetail article = articleDetailService.getArticleDetail(id);
         User author = userService.getById(article.getUserId());
         ArticleDetailResp resp = ArticleConverter.converter(article, author);
         return  resp;
@@ -88,7 +91,7 @@ public class ArticleController {
         articleDetail.setTitle(title);
         articleDetail.setContent(content);
         articleDetail.setImgUrl(imgURL);
-        articleService.writeArticle(userId, articleDetail);
+        articleDetailService.writeArticle(userId, articleDetail);
         String message = "发表成功";
         return new Result(ResultCode.SUCCESS.getCode(), message);
     }

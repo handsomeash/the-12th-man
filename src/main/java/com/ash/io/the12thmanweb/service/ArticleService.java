@@ -1,7 +1,6 @@
 package com.ash.io.the12thmanweb.service;
 
 import com.ash.io.the12thmanweb.entity.article.Article;
-import com.ash.io.the12thmanweb.entity.article.ArticleDetail;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -20,23 +19,6 @@ public interface ArticleService extends IService<Article> {
     IPage<Article> getArticles(Integer PageIndex, Integer PageSize);
 
     /**
-     * 写文章
-     *
-     * @param userId
-     * @param articleDetail
-     * @return
-     */
-    boolean writeArticle(Integer userId, ArticleDetail articleDetail);
-
-    /**
-     * 获取文章信息
-     *
-     * @param id
-     * @return
-     */
-    ArticleDetail getArticleDetail(Integer id);
-
-    /**
      * 收藏文章
      *
      * @param userId
@@ -47,6 +29,7 @@ public interface ArticleService extends IService<Article> {
 
     /**
      * 取消收藏
+     *
      * @param userId
      * @param articleId
      * @return
@@ -55,10 +38,19 @@ public interface ArticleService extends IService<Article> {
 
     /**
      * 分页查询用户收藏文章
+     *
      * @param PageIndex
      * @param PageSize
      * @param userId
      * @return
      */
-    IPage<Article> getCollectionArticles(Integer PageIndex, Integer PageSize,Integer userId);
+    IPage<Article> getCollectionArticles(Integer PageIndex, Integer PageSize, Integer userId);
+
+    /**
+     * 用户评论文章，更新文章评论数字段
+     *
+     * @param articleId
+     * @return
+     */
+    boolean commentArticle(Integer articleId);
 }

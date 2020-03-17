@@ -6,6 +6,7 @@ import com.ash.io.the12thmanweb.entity.user.User;
 import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.response.CommentResp;
 import com.ash.io.the12thmanweb.result.Result;
+import com.ash.io.the12thmanweb.service.ArticleService;
 import com.ash.io.the12thmanweb.service.CommentService;
 import com.ash.io.the12thmanweb.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,8 @@ public class CommentController {
     private CommentService commentService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ArticleService articleService;
 
     /**
      * 用户发表评论
@@ -41,6 +44,8 @@ public class CommentController {
     public Result comment(@RequestBody Comment comment) {
         log.info("用户发表评论" + comment.toString());
         commentService.save(comment);
+        //更新文章的评论字段的数量
+        articleService.commentArticle(comment.getArticleId());
         String message = "发表评论成功";
         return new Result(ResultCode.SUCCESS.getCode(), message);
 

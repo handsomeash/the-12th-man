@@ -1,9 +1,6 @@
 package com.ash.io.the12thmanweb.service.serviceImpl;
 
 import com.ash.io.the12thmanweb.entity.article.Article;
-import com.ash.io.the12thmanweb.entity.article.ArticleDetail;
-import com.ash.io.the12thmanweb.entity.user.User;
-import com.ash.io.the12thmanweb.mapper.ArticleDetailMapper;
 import com.ash.io.the12thmanweb.mapper.ArticleMapper;
 import com.ash.io.the12thmanweb.service.ArticleService;
 import com.ash.io.the12thmanweb.service.UserService;
@@ -17,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -29,14 +25,12 @@ import java.util.List;
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
     @Autowired
     private ArticleMapper articleMapper;
-    @Autowired
-    private ArticleDetailMapper articleDetailMapper;
 
     @Autowired
     private UserService userService;
 
     @Override
-    @Cacheable(value = "articles", key = "#PageIndex")
+//    @Cacheable(value = "articles", key = "#PageIndex")
     public IPage<Article> getArticles(Integer PageIndex, Integer PageSize) {
         log.info("通过数据库查询所有文章");
         //设置查询条件
@@ -47,35 +41,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<Article> page = new Page<>(PageIndex, PageSize);
         return articleMapper.selectPage(page, wrapper);
-    }
-
-    @Override
-    public boolean writeArticle(Integer userId, ArticleDetail articleDetail) {
-        User user = userService.getById(userId);
-        LocalDate now = LocalDate.now();
-        articleDetail.setUserId(user.getId());
-        articleDetail.setCreateDate(now);
-        int insert = articleDetailMapper.insert(articleDetail);
-        if (insert > 0) {
-            Article article = new Article();
-            article.setArticleDetailId(articleDetail.getId());
-            article.setTitle(articleDetail.getTitle());
-            article.setUserId(user.getId());
-            article.setAuthor(user.getNickname());
-            article.setCreateDate(now);
-            article.setImgUrl(articleDetail.getImgUrl());
-            articleMapper.insert(article);
-        }
-
-        return insert > 0;
-    }
-
-    @Override
-    @Cacheable(value = "article", key = "#id")
-    public ArticleDetail getArticleDetail(Integer id) {
-        log.info("通过数据库查询id为：" + id + "的文章");
-        ArticleDetail article = articleDetailMapper.selectById(id);
-        return article;
     }
 
     @Override
@@ -132,6 +97,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<Article> page = new Page<>(PageIndex, PageSize);
         return articleMapper.selectPage(page, wrapper);
+    }
+
+    @Override
+    public boolean commentArticle(Integer articleId) {
+        Article article = articleMapper.selectById(articleId);
+        article.setCommentNum(article.getCommentNum() + 1);
+        UpdateWrapper<Article> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", articleId);
+        int update = articleMapper.update(article, updateWrapper);
+        return update > 0;
     }
 
 
