@@ -3,6 +3,7 @@ package com.ash.io.the12thmanweb.service;
 import com.ash.io.the12thmanweb.entity.article.ArticleDetail;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+
 /**
  * @ Author  ：FengYiJie
  * @ Date    ：Created in 2020-03-16
@@ -24,5 +25,6 @@ public interface ArticleDetailService extends IService<ArticleDetail> {
      * @return
      */
     boolean writeArticle(Integer userId, ArticleDetail articleDetail);
+
 
 }

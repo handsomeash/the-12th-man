@@ -19,24 +19,6 @@ public interface ArticleService extends IService<Article> {
     IPage<Article> getArticles(Integer PageIndex, Integer PageSize);
 
     /**
-     * 收藏文章
-     *
-     * @param userId
-     * @param articleId
-     * @return
-     */
-    boolean collectArticle(Integer userId, Integer articleId);
-
-    /**
-     * 取消收藏
-     *
-     * @param userId
-     * @param articleId
-     * @return
-     */
-    boolean cancelCollectArticle(Integer userId, Integer articleId);
-
-    /**
      * 分页查询用户收藏文章
      *
      * @param PageIndex
@@ -46,11 +28,4 @@ public interface ArticleService extends IService<Article> {
      */
     IPage<Article> getCollectionArticles(Integer PageIndex, Integer PageSize, Integer userId);
 
-    /**
-     * 用户评论文章，更新文章评论数字段
-     *
-     * @param articleId
-     * @return
-     */
-    boolean commentArticle(Integer articleId);
 }

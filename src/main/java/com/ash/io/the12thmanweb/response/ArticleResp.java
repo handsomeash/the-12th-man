@@ -13,14 +13,14 @@ import java.time.LocalDate;
  * 用于返回文章相关的response类
  *
  * @ Author  ：FengYiJie
- * @ Date    ：Created in 2020-03-16
+ * @ Date    ：Created in 2020-03-17
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ArticleDetailResp implements Serializable {
-    private static final long serialVersionUID = -7701763123433012614L;
+public class ArticleResp implements Serializable {
+    private static final long serialVersionUID = -8356219651964695627L;
 
     private Integer id;
     private String title;
@@ -28,12 +28,10 @@ public class ArticleDetailResp implements Serializable {
     private Integer userId;
     private String imgUrl;
     private LocalDate createDate;
-    //内容
-    private String content;
+    private Integer articleDetailId;
+    private User author;
     //收藏数
     private Integer collectionNum;
     //评论数
     private Integer commentNum;
-    //作者信息
-    private User author;
 }

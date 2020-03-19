@@ -31,8 +31,5 @@ public class ArticleDetail extends Model<ArticleDetail> {
     private LocalDate createDate;
     //内容
     private String content;
-    //收藏数
-    private Integer collectionNum;
-    //评论数
-    private Integer commentNum;
+
 }

@@ -23,5 +23,5 @@ public interface UserDetailService extends IService<UserDetail> {
      * @param userId
      * @return
      */
-    UserDetail collectArticle(Integer userId, CalculationEnums enums);
+    UserDetail changeCollectionNum(Integer userId, CalculationEnums enums);
 }

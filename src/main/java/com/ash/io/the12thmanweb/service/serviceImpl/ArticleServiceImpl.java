@@ -30,7 +30,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private UserService userService;
 
     @Override
-//    @Cacheable(value = "articles", key = "#PageIndex")
+    @Cacheable(value = "articles", key = "#PageIndex")
     public IPage<Article> getArticles(Integer PageIndex, Integer PageSize) {
         log.info("通过数据库查询所有文章");
         //设置查询条件
@@ -41,44 +41,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<Article> page = new Page<>(PageIndex, PageSize);
         return articleMapper.selectPage(page, wrapper);
-    }
-
-    @Override
-    public boolean collectArticle(Integer userId, Integer articleId) {
-        boolean isCollect = userService.collectArticle(userId, articleId);
-
-        if (isCollect == false) {
-            return false;
-        }
-
-        //文章表收藏数字段+1
-        Article article = articleMapper.selectById(articleId);
-        article.setCollectionNum(article.getCollectionNum() + 1);
-        UpdateWrapper<Article> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", articleId);
-        int update = articleMapper.update(article, updateWrapper);
-
-//
-//        ArticleDetail article = articleDetailMapper.selectById(articleId);
-//        article.setCollectionNum(article.getCollectionNum() + 1);
-//        UpdateWrapper<ArticleDetail> updateWrapper = new UpdateWrapper<>();
-//        updateWrapper.eq("id",articleId);
-//        int update = articleDetailMapper.update(article, updateWrapper);
-
-        return update > 0;
-    }
-
-    @Override
-    public boolean cancelCollectArticle(Integer userId, Integer articleId) {
-        userService.cancelCollectArticle(userId, articleId);
-
-        //文章表收藏数字段-1
-        Article article = articleMapper.selectById(articleId);
-        article.setCollectionNum(article.getCollectionNum() - 1);
-        UpdateWrapper<Article> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", articleId);
-        int update = articleMapper.update(article, updateWrapper);
-        return update > 0;
     }
 
     @Override
@@ -97,16 +59,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<Article> page = new Page<>(PageIndex, PageSize);
         return articleMapper.selectPage(page, wrapper);
-    }
-
-    @Override
-    public boolean commentArticle(Integer articleId) {
-        Article article = articleMapper.selectById(articleId);
-        article.setCommentNum(article.getCommentNum() + 1);
-        UpdateWrapper<Article> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", articleId);
-        int update = articleMapper.update(article, updateWrapper);
-        return update > 0;
     }
 
 

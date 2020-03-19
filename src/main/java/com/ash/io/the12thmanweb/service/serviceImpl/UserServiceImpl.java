@@ -12,7 +12,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -99,7 +98,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userCollection.setUserId(userId);
         int insert = userCollectionMapper.insert(userCollection);
         //更新用户明细表的数据，收藏文章数 字段+1
-        userDetailService.collectArticle(userId, CalculationEnums.ADD);
+        userDetailService.changeCollectionNum(userId, CalculationEnums.ADD);
         return insert > 0;
     }
 
@@ -109,7 +108,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.eq("user_id", userId).eq("article_id", articleId);
         int delete = userCollectionMapper.delete(wrapper);
         //用户明细表收藏文章数 字段-1
-        userDetailService.collectArticle(userId, CalculationEnums.DELETE);
+        userDetailService.changeCollectionNum(userId, CalculationEnums.DELETE);
         return delete > 0;
     }
 

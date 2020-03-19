@@ -34,7 +34,7 @@ public class UserDetailServiceImpl extends ServiceImpl<UserDetailMapper, UserDet
 
     @Override
     @CachePut(value = "userDetail", key = "#userId")
-    public UserDetail collectArticle(Integer userId, CalculationEnums enums) {
+    public UserDetail changeCollectionNum(Integer userId, CalculationEnums enums) {
         UserDetail userDetail = getDetailByUserId(userId);
         if(enums == CalculationEnums.ADD){
             userDetail.setCollectionNum(userDetail.getCollectionNum() + 1);

@@ -4,11 +4,15 @@ import com.ash.io.the12thmanweb.Utils.MyUtil;
 import com.ash.io.the12thmanweb.converter.ArticleConverter;
 import com.ash.io.the12thmanweb.entity.article.Article;
 import com.ash.io.the12thmanweb.entity.article.ArticleDetail;
+import com.ash.io.the12thmanweb.entity.article.ArticleNumber;
 import com.ash.io.the12thmanweb.entity.user.User;
+import com.ash.io.the12thmanweb.enums.CalculationEnums;
 import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.response.ArticleDetailResp;
+import com.ash.io.the12thmanweb.response.ArticleResp;
 import com.ash.io.the12thmanweb.result.Result;
 import com.ash.io.the12thmanweb.service.ArticleDetailService;
+import com.ash.io.the12thmanweb.service.ArticleNumberService;
 import com.ash.io.the12thmanweb.service.ArticleService;
 import com.ash.io.the12thmanweb.service.UserService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -19,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +41,8 @@ public class ArticleController {
     @Autowired
     private ArticleDetailService articleDetailService;
     @Autowired
+    private ArticleNumberService articleNumberService;
+    @Autowired
     private UserService userService;
 
     /**
@@ -52,8 +59,18 @@ public class ArticleController {
         //获取总条数
         long total = articles.getTotal();
         List<Article> records = articles.getRecords();
+        List<ArticleResp> respList = new ArrayList<>();
+        //获取到文章评论收藏信息，作者信息，封装到response中
+        records.forEach(r -> {
+
+            ArticleNumber articleNumber = articleNumberService.getByArticleId(r.getId());
+            User user = userService.getById(r.getUserId());
+            ArticleResp articleResp = ArticleConverter.converter(r, articleNumber, user);
+            respList.add(articleResp);
+
+        });
         Map<String, Object> result = new HashMap<>();
-        result.put("records", records);
+        result.put("articles", respList);
         result.put("total", total);
         return result;
     }
@@ -71,7 +88,7 @@ public class ArticleController {
         ArticleDetail article = articleDetailService.getArticleDetail(id);
         User author = userService.getById(article.getUserId());
         ArticleDetailResp resp = ArticleConverter.converter(article, author);
-        return  resp;
+        return resp;
     }
 
     /**
@@ -109,7 +126,7 @@ public class ArticleController {
         Integer articleId = map.get("articleId");
         log.info("userId:" + userId);
         log.info("articleId:" + articleId);
-        boolean success = articleService.collectArticle(userId, articleId);
+        boolean success = articleNumberService.collectArticle(userId, articleId, CalculationEnums.ADD);
         String message;
         if (success) {
             message = "收藏成功";
@@ -133,7 +150,7 @@ public class ArticleController {
         Integer articleId = map.get("articleId");
         log.info("userId:" + userId);
         log.info("articleId:" + articleId);
-        boolean success = articleService.cancelCollectArticle(userId, articleId);
+        boolean success = articleNumberService.collectArticle(userId, articleId, CalculationEnums.DELETE);
         String message;
         if (success) {
             message = "取消收藏成功";
