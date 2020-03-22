@@ -6,6 +6,7 @@ import com.ash.io.the12thmanweb.entity.article.Article;
 import com.ash.io.the12thmanweb.entity.article.ArticleDetail;
 import com.ash.io.the12thmanweb.entity.article.ArticleNumber;
 import com.ash.io.the12thmanweb.entity.user.User;
+import com.ash.io.the12thmanweb.enums.ArticleEnums;
 import com.ash.io.the12thmanweb.enums.CalculationEnums;
 import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.response.ArticleDetailResp;
@@ -51,11 +52,23 @@ public class ArticleController {
      * @return
      */
     @PostMapping("/article")
-    public Map<String, Object> listArticles(@RequestBody Map<String, Integer> map) {
-        Integer PageIndex = map.get("current");
-        Integer PageSize = map.get("pagesize");
+    public Map<String, Object> listArticles(@RequestBody Map<String, Object> map) {
+        Integer PageIndex = (Integer) map.get("current");
+        Integer PageSize = (Integer) map.get("pagesize");
+        String type = (String) map.get("type");
+
+        IPage<Article> articles;
+        switch (type) {
+            case "FOOTBALL":
+                articles = articleService.getArticlesByType(PageIndex, PageSize, ArticleEnums.FOOTBALL);
+                break;
+            case "BASKETBALL":
+                articles = articleService.getArticlesByType(PageIndex, PageSize, ArticleEnums.BASKETBALL);
+                break;
+            default:
+                articles = articleService.getArticles(PageIndex, PageSize);
+        }
         log.info("查询页数：" + PageIndex + "查询数据条数：" + PageSize);
-        IPage<Article> articles = articleService.getArticles(PageIndex, PageSize);
         //获取总条数
         long total = articles.getTotal();
         List<Article> records = articles.getRecords();
@@ -104,10 +117,12 @@ public class ArticleController {
         String content = map.get("content");
         String title = map.get("title");
         String imgURL = map.get("imgurl");
+        String type = map.get("type");
         ArticleDetail articleDetail = new ArticleDetail();
         articleDetail.setTitle(title);
         articleDetail.setContent(content);
         articleDetail.setImgUrl(imgURL);
+        articleDetail.setArticleType(ArticleEnums.valueOf(type));
         articleDetailService.writeArticle(userId, articleDetail);
         String message = "发表成功";
         return new Result(ResultCode.SUCCESS.getCode(), message);

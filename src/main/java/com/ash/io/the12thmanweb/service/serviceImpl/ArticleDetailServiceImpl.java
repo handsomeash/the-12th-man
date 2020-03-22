@@ -56,6 +56,7 @@ public class ArticleDetailServiceImpl extends ServiceImpl<ArticleDetailMapper, A
             article.setUserId(user.getId());
             article.setCreateDate(now);
             article.setImgUrl(articleDetail.getImgUrl());
+            article.setArticleType(articleDetail.getArticleType());
             //创建文章表信息
             articleService.save(article);
             ArticleNumber articleNumber = new ArticleNumber();

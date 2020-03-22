@@ -1,5 +1,6 @@
 package com.ash.io.the12thmanweb.entity.article;
 
+import com.ash.io.the12thmanweb.enums.ArticleEnums;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -29,6 +30,7 @@ public class ArticleDetail extends Model<ArticleDetail> {
     private Integer userId;
     private String imgUrl;
     private LocalDate createDate;
+    private ArticleEnums articleType;
     //内容
     private String content;
 

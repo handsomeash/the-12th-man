@@ -1,6 +1,7 @@
 package com.ash.io.the12thmanweb.service.serviceImpl;
 
 import com.ash.io.the12thmanweb.entity.article.Article;
+import com.ash.io.the12thmanweb.enums.ArticleEnums;
 import com.ash.io.the12thmanweb.mapper.ArticleMapper;
 import com.ash.io.the12thmanweb.service.ArticleService;
 import com.ash.io.the12thmanweb.service.UserService;
@@ -38,6 +39,19 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //按时间倒序查询
         wrapper.orderByDesc("create_date");
 
+        //pageIndex:查询第几页,pageSize:查询几条数据
+        Page<Article> page = new Page<>(PageIndex, PageSize);
+        return articleMapper.selectPage(page, wrapper);
+    }
+
+    @Override
+    public IPage<Article> getArticlesByType(Integer PageIndex, Integer PageSize, ArticleEnums type) {
+        //设置查询条件
+        QueryWrapper<Article> wrapper = new QueryWrapper();
+
+        //按时间倒序查询
+        wrapper.orderByDesc("create_date");
+        wrapper.eq("article_type", type);
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<Article> page = new Page<>(PageIndex, PageSize);
         return articleMapper.selectPage(page, wrapper);
