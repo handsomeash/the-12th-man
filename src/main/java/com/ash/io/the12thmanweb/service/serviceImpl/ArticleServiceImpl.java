@@ -6,7 +6,6 @@ import com.ash.io.the12thmanweb.mapper.ArticleMapper;
 import com.ash.io.the12thmanweb.service.ArticleService;
 import com.ash.io.the12thmanweb.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -60,7 +59,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public IPage<Article> getCollectionArticles(Integer PageIndex, Integer PageSize, Integer userId) {
 
-        List<Integer> articleId = userService.getArticleIdByUserId(userId);
+        List<Integer> articleId = userService.getCollectionArticleIdByUserId(userId);
         //如果用户没有收藏过文章
         if (articleId.size() == 0) {
             return null;
@@ -68,6 +67,23 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //设置查询条件
         QueryWrapper<Article> wrapper = new QueryWrapper();
         //按时间倒序查询，通过文章id批量查询用户收藏的文章
+        wrapper.orderByDesc("create_date").in("id", articleId);
+
+        //pageIndex:查询第几页,pageSize:查询几条数据
+        Page<Article> page = new Page<>(PageIndex, PageSize);
+        return articleMapper.selectPage(page, wrapper);
+    }
+
+    @Override
+    public IPage<Article> getWriteArticles(Integer PageIndex, Integer PageSize, Integer userId) {
+        List<Integer> articleId = userService.getWriteArticleIdByUserId(userId);
+        //如果用户没有发表过文章
+        if (articleId.size() == 0) {
+            return null;
+        }
+        //设置查询条件
+        QueryWrapper<Article> wrapper = new QueryWrapper();
+        //按时间倒序查询，通过文章id批量查询用户发表的文章
         wrapper.orderByDesc("create_date").in("id", articleId);
 
         //pageIndex:查询第几页,pageSize:查询几条数据

@@ -26,5 +26,12 @@ public interface ArticleDetailService extends IService<ArticleDetail> {
      */
     boolean writeArticle(Integer userId, ArticleDetail articleDetail);
 
-
+    /**
+     * 编辑文章
+     *
+     * @param id
+     * @param articleDetail
+     * @return
+     */
+    ArticleDetail editArticle(Integer id, ArticleDetail articleDetail);
 }

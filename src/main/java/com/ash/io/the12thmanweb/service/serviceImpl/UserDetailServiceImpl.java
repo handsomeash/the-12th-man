@@ -36,14 +36,23 @@ public class UserDetailServiceImpl extends ServiceImpl<UserDetailMapper, UserDet
     @CachePut(value = "userDetail", key = "#userId")
     public UserDetail changeCollectionNum(Integer userId, CalculationEnums enums) {
         UserDetail userDetail = getDetailByUserId(userId);
-        if(enums == CalculationEnums.ADD){
+        if (enums == CalculationEnums.ADD) {
             userDetail.setCollectionNum(userDetail.getCollectionNum() + 1);
-        }else{
+        } else {
             userDetail.setCollectionNum(userDetail.getCollectionNum() - 1);
         }
         UpdateWrapper<UserDetail> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", userDetail.getId());
         userDetailMapper.update(userDetail, updateWrapper);
+        return userDetail;
+    }
+
+    @Override
+    @CachePut(value = "userDetail", key = "#userId")
+    public UserDetail writeArticle(Integer userId) {
+        UserDetail userDetail = getDetailByUserId(userId);
+        userDetail.setArticleNum(userDetail.getArticleNum() + 1);
+        userDetailMapper.updateById(userDetail);
         return userDetail;
     }
 }

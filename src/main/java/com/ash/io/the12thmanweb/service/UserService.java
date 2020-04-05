@@ -1,7 +1,6 @@
 package com.ash.io.the12thmanweb.service;
 
 import com.ash.io.the12thmanweb.entity.user.User;
-import com.ash.io.the12thmanweb.entity.user.UserDetail;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -40,9 +39,9 @@ public interface UserService extends IService<User> {
     User getByPhone(String phone);
 
 
-
     /**
      * 收藏文章
+     *
      * @param userId
      * @param articleId
      * @return
@@ -51,6 +50,7 @@ public interface UserService extends IService<User> {
 
     /**
      * 取消收藏
+     *
      * @param userId
      * @param articleId
      * @return
@@ -59,10 +59,26 @@ public interface UserService extends IService<User> {
 
     /**
      * 通过用户id查询收藏的文章id
+     *
      * @param userId
      * @return
      */
-    List<Integer> getArticleIdByUserId(Integer userId);
+    List<Integer> getCollectionArticleIdByUserId(Integer userId);
 
+    /**
+     * 通过用户id查询发表的文章id
+     *
+     * @param userId
+     * @return
+     */
+    List<Integer> getWriteArticleIdByUserId(Integer userId);
 
+    /**
+     * 用户发表文章时，针对用户相关的操作
+     * （创建一条用户发表文章表记录，用户明细表中，发表文章数+1）
+     *
+     * @param userId
+     * @param articleId
+     */
+    void writeArticle(Integer userId,Integer articleId);
 }

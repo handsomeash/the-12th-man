@@ -39,4 +39,14 @@ public interface ArticleService extends IService<Article> {
      */
     IPage<Article> getCollectionArticles(Integer PageIndex, Integer PageSize, Integer userId);
 
+    /**
+     * 分页查询用户发表的文章
+     *
+     * @param PageIndex
+     * @param PageSize
+     * @param userId
+     * @return
+     */
+    IPage<Article> getWriteArticles(Integer PageIndex, Integer PageSize, Integer userId);
+
 }

@@ -12,6 +12,7 @@ import com.ash.io.the12thmanweb.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,6 @@ public class ArticleDetailServiceImpl extends ServiceImpl<ArticleDetailMapper, A
 
     @Override
     public boolean writeArticle(Integer userId, ArticleDetail articleDetail) {
-        User user = userService.getById(userId);
         LocalDate now = LocalDate.now();
         articleDetail.setUserId(userId);
         articleDetail.setCreateDate(now);
@@ -53,7 +53,7 @@ public class ArticleDetailServiceImpl extends ServiceImpl<ArticleDetailMapper, A
             Article article = new Article();
             article.setArticleDetailId(articleDetail.getId());
             article.setTitle(articleDetail.getTitle());
-            article.setUserId(user.getId());
+            article.setUserId(userId);
             article.setCreateDate(now);
             article.setImgUrl(articleDetail.getImgUrl());
             article.setArticleType(articleDetail.getArticleType());
@@ -63,9 +63,29 @@ public class ArticleDetailServiceImpl extends ServiceImpl<ArticleDetailMapper, A
             articleNumber.setArticleId(article.getId());
             //创建文章评论数和收藏数表信息
             articleNumberService.save(articleNumber);
+            //创建用户发表文章表信息
+            userService.writeArticle(userId, article.getId());
         }
 
         return insert > 0;
+    }
+
+    @Override
+    @CachePut(value = "articleDetail", key = "#id")
+    public ArticleDetail editArticle(Integer id, ArticleDetail articleDetail) {
+        ArticleDetail record = articleDetailMapper.selectById(id);
+        record.setContent(articleDetail.getContent());
+        record.setTitle(articleDetail.getTitle());
+        record.setArticleType(articleDetail.getArticleType());
+        int update = articleDetailMapper.updateById(record);
+        if (update>0) {
+            Article article = new Article();
+            article.setId(id);
+            article.setTitle(articleDetail.getTitle());
+            article.setArticleType(articleDetail.getArticleType());
+            articleService.updateById(article);
+        }
+        return record;
     }
 
 }

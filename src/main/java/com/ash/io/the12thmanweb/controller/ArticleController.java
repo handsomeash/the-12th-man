@@ -128,6 +128,24 @@ public class ArticleController {
         return new Result(ResultCode.SUCCESS.getCode(), message);
     }
 
+    @PostMapping("/editArticle")
+    public Result editArticle(@RequestBody Map<String, String> map){
+        log.info(map.toString());
+        int id = Integer.parseInt(map.get("articleId"));
+        String content = map.get("content");
+        String title = map.get("title");
+        String type = map.get("type");
+        ArticleDetail articleDetail =  ArticleDetail.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .articleType(ArticleEnums.valueOf(type))
+                .build();
+        articleDetailService.editArticle(id,articleDetail);
+        String message = "编辑成功";
+        return new Result(ResultCode.SUCCESS.getCode(), message);
+    }
+
     /**
      * 用户收藏文章
      *
@@ -201,6 +219,40 @@ public class ArticleController {
         result.put("records", records);
         result.put("total", total);
         return result;
+    }
+
+    /**
+     * 分页获取发表的文章信息
+     *
+     * @return
+     */
+    @PostMapping("/article/write")
+    public Map<String, Object> listWriteArticles(@RequestBody Map<String, Integer> map) {
+        //分页信息
+        Integer PageIndex = map.get("current");
+        Integer PageSize = map.get("pagesize");
+        //用户信息
+        Integer userId = map.get("userId");
+        log.info("查询页数：" + PageIndex + "查询数据条数：" + PageSize);
+        IPage<Article> articles = articleService.getWriteArticles(PageIndex, PageSize, userId);
+        //如果用户没有发表过文章
+        if (articles == null) {
+            return null;
+        }
+        //获取总条数
+        long total = articles.getTotal();
+        List<Article> records = articles.getRecords();
+        Map<String, Object> result = new HashMap<>();
+        result.put("records", records);
+        result.put("total", total);
+        return result;
+    }
+
+    @GetMapping("/getEditArticle/{id}")
+    public ArticleDetail getEditArticleDetail(@PathVariable("id") Integer id) {
+
+        ArticleDetail articleDetail = articleDetailService.getArticleDetail(id);
+        return articleDetail;
     }
 
     /**

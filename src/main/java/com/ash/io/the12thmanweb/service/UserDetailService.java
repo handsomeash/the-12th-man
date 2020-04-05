@@ -24,4 +24,12 @@ public interface UserDetailService extends IService<UserDetail> {
      * @return
      */
     UserDetail changeCollectionNum(Integer userId, CalculationEnums enums);
+
+    /**
+     * 用户明细表发表文章
+     *
+     * @param userId
+     * @return
+     */
+    UserDetail writeArticle(Integer userId);
 }

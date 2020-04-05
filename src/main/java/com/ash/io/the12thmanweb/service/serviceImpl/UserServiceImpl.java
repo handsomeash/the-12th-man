@@ -1,9 +1,11 @@
 package com.ash.io.the12thmanweb.service.serviceImpl;
 
 import com.ash.io.the12thmanweb.entity.user.User;
+import com.ash.io.the12thmanweb.entity.user.UserArticle;
 import com.ash.io.the12thmanweb.entity.user.UserCollection;
 import com.ash.io.the12thmanweb.entity.user.UserDetail;
 import com.ash.io.the12thmanweb.enums.CalculationEnums;
+import com.ash.io.the12thmanweb.mapper.UserArticleMapper;
 import com.ash.io.the12thmanweb.mapper.UserCollectionMapper;
 import com.ash.io.the12thmanweb.mapper.UserMapper;
 import com.ash.io.the12thmanweb.service.UserDetailService;
@@ -34,6 +36,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private UserCollectionMapper userCollectionMapper;
+
+    @Autowired
+    private UserArticleMapper userArticleMapper;
 
     @Override
     public User register(User user) {
@@ -80,7 +85,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
 
-
     @Override
     public boolean collectArticle(Integer userId, Integer articleId) {
 
@@ -113,14 +117,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public List<Integer> getArticleIdByUserId(Integer userId) {
+    public List<Integer> getCollectionArticleIdByUserId(Integer userId) {
         QueryWrapper<UserCollection> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
         List<UserCollection> userCollections = userCollectionMapper.selectList(wrapper);
         List<Integer> result = new ArrayList<>();
-        userCollections.forEach(a -> {
-            result.add(a.getArticleId());
-        });
+        userCollections.forEach(a -> result.add(a.getArticleId()));
         return result;
+    }
+
+    @Override
+    public List<Integer> getWriteArticleIdByUserId(Integer userId) {
+        QueryWrapper<UserArticle> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", userId);
+        List<UserArticle> userArticles = userArticleMapper.selectList(wrapper);
+        List<Integer> result = new ArrayList<>();
+        userArticles.forEach(a -> result.add(a.getArticleId()));
+        return result;
+    }
+
+    @Override
+    public void writeArticle(Integer userId, Integer articleId) {
+        //创建一条用户发表文章表记录
+        UserArticle userArticle = new UserArticle();
+        userArticle.setUserId(userId);
+        userArticle.setArticleId(articleId);
+        userArticleMapper.insert(userArticle);
+        //用户明细表中，发表文章数+1
+        userDetailService.writeArticle(userId);
     }
 }
