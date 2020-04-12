@@ -11,6 +11,8 @@ import com.ash.io.the12thmanweb.mapper.UserMapper;
 import com.ash.io.the12thmanweb.service.UserDetailService;
 import com.ash.io.the12thmanweb.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +65,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public User getByUsername(String username) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("username", username);
+        //忽略已逻辑删除的用户
+        wrapper.eq("username", username).eq("is_delete", 0);
         User user = userMapper.selectOne(wrapper);
         return user;
     }
@@ -82,6 +85,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.eq("phone", phone);
         User user = userMapper.selectOne(wrapper);
         return user;
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.orderByAsc("register_date");
+        List<User> users = userMapper.selectList(wrapper);
+        return users;
+    }
+
+    @Override
+    public IPage<User> findAllUsersByPage(Integer PageIndex, Integer PageSize) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("is_delete", 0).orderByAsc("register_date");
+        //pageIndex:查询第几页,pageSize:查询几条数据
+        Page<User> page = new Page<>(PageIndex, PageSize);
+        return userMapper.selectPage(page, wrapper);
     }
 
 

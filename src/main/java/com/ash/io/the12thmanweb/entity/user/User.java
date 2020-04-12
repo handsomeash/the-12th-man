@@ -27,6 +27,7 @@ public class User extends Model<User> {
     private String email;
     private String phone;
     private String portraitUrl;
+    private Integer isDelete;
     private LocalDate registerDate;
     private GenderEnums gender;
     private LocalDate birthday;

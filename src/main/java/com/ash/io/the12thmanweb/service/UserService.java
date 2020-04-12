@@ -1,6 +1,7 @@
 package com.ash.io.the12thmanweb.service;
 
 import com.ash.io.the12thmanweb.entity.user.User;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -38,6 +39,21 @@ public interface UserService extends IService<User> {
      */
     User getByPhone(String phone);
 
+    /**
+     * 查询所有用户
+     *
+     * @return
+     */
+    List<User> getAllUsers();
+
+    /**
+     * 分页查找所有用户信息
+     *
+     * @param PageIndex
+     * @param PageSize
+     * @return
+     */
+    IPage<User> findAllUsersByPage(Integer PageIndex, Integer PageSize);
 
     /**
      * 收藏文章
@@ -80,5 +96,5 @@ public interface UserService extends IService<User> {
      * @param userId
      * @param articleId
      */
-    void writeArticle(Integer userId,Integer articleId);
+    void writeArticle(Integer userId, Integer articleId);
 }
