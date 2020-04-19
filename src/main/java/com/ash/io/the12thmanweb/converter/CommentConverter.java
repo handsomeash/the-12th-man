@@ -21,4 +21,17 @@ public class CommentConverter {
                 .build();
         return commentResp;
     }
+
+    public static CommentResp converter(Comment comment, User user,String articleName){
+        CommentResp commentResp = CommentResp.builder()
+                .id(comment.getId())
+                .articleId(comment.getArticleId())
+                .articleName(articleName)
+                .content(comment.getContent())
+                .createDate(comment.getCreateDate())
+                .userId(comment.getUserId())
+                .user(user)
+                .build();
+        return commentResp;
+    }
 }

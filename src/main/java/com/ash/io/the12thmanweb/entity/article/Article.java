@@ -30,13 +30,9 @@ public class Article extends Model<Article> {
     //用户表id
     private Integer userId;
     private String imgUrl;
+    private Integer isDelete;
     private LocalDate createDate;
     private Integer articleDetailId;
     private ArticleEnums articleType;
-    //收藏数
-//    private Integer collectionNum;
-    //评论数
-//    private Integer commentNum;
-
 
 }

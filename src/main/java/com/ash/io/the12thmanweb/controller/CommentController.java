@@ -3,6 +3,7 @@ package com.ash.io.the12thmanweb.controller;
 import com.ash.io.the12thmanweb.converter.CommentConverter;
 import com.ash.io.the12thmanweb.entity.comment.Comment;
 import com.ash.io.the12thmanweb.entity.user.User;
+import com.ash.io.the12thmanweb.enums.CalculationEnums;
 import com.ash.io.the12thmanweb.enums.ResultCode;
 import com.ash.io.the12thmanweb.response.CommentResp;
 import com.ash.io.the12thmanweb.result.Result;
@@ -45,7 +46,7 @@ public class CommentController {
         log.info("用户发表评论" + comment.toString());
         commentService.save(comment);
         //更新文章的评论字段的数量
-        articleNumberService.updateCommentNumByArticleId(comment.getArticleId());
+        articleNumberService.updateCommentNumByArticleId(comment.getArticleId(), CalculationEnums.ADD);
         String message = "发表评论成功";
         return new Result(ResultCode.SUCCESS.getCode(), message);
 

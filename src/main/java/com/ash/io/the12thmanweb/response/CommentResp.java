@@ -26,5 +26,6 @@ public class CommentResp implements Serializable {
     private Integer userId;
     private String content;
     private LocalDate createDate;
+    private String articleName;
     private User user;
 }

@@ -17,5 +17,11 @@ public interface AdminService extends IService<Admin> {
      */
     Admin findAdmin(Admin admin);
 
-
+    /**
+     * 根据密码查找管理员
+     *
+     * @param password
+     * @return
+     */
+    Admin findByPassword(String password);
 }

@@ -26,5 +26,6 @@ public class Comment extends Model<Comment> {
     private Integer articleId;
     private Integer userId;
     private String content;
+    private Integer isDelete;
     private LocalDate createDate;
 }

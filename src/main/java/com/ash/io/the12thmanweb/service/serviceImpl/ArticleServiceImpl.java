@@ -30,13 +30,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private UserService userService;
 
     @Override
-    @Cacheable(value = "articles", key = "#PageIndex")
+//    @Cacheable(value = "articles", key = "#PageIndex")
     public IPage<Article> getArticles(Integer PageIndex, Integer PageSize) {
         log.info("通过数据库查询所有文章");
         //设置查询条件
         QueryWrapper<Article> wrapper = new QueryWrapper();
         //按时间倒序查询
-        wrapper.orderByDesc("create_date");
+        wrapper.eq("is_delete", 0).orderByDesc("create_date");
 
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<Article> page = new Page<>(PageIndex, PageSize);
@@ -50,7 +50,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
         //按时间倒序查询
         wrapper.orderByDesc("create_date");
-        wrapper.eq("article_type", type);
+        wrapper.eq("is_delete", 0).eq("article_type", type);
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<Article> page = new Page<>(PageIndex, PageSize);
         return articleMapper.selectPage(page, wrapper);
@@ -67,7 +67,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //设置查询条件
         QueryWrapper<Article> wrapper = new QueryWrapper();
         //按时间倒序查询，通过文章id批量查询用户收藏的文章
-        wrapper.orderByDesc("create_date").in("id", articleId);
+        wrapper.eq("is_delete", 0).orderByDesc("create_date").in("id", articleId);
 
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<Article> page = new Page<>(PageIndex, PageSize);
@@ -84,11 +84,20 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //设置查询条件
         QueryWrapper<Article> wrapper = new QueryWrapper();
         //按时间倒序查询，通过文章id批量查询用户发表的文章
-        wrapper.orderByDesc("create_date").in("id", articleId);
+        wrapper.eq("is_delete", 0).orderByDesc("create_date").in("id", articleId);
 
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<Article> page = new Page<>(PageIndex, PageSize);
         return articleMapper.selectPage(page, wrapper);
+    }
+
+    @Override
+    public boolean deleteArticleById(Integer id) {
+        Article article = articleMapper.selectById(id);
+        article.setIsDelete(1);
+        int i = articleMapper.updateById(article);
+
+        return i > 0;
     }
 
 

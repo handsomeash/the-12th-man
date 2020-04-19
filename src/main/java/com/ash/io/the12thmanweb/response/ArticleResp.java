@@ -1,6 +1,8 @@
 package com.ash.io.the12thmanweb.response;
 
+import com.ash.io.the12thmanweb.entity.article.Article;
 import com.ash.io.the12thmanweb.entity.user.User;
+import com.ash.io.the12thmanweb.enums.ArticleEnums;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +21,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ArticleResp implements Serializable {
+public class ArticleResp extends Article implements Serializable {
     private static final long serialVersionUID = -8356219651964695627L;
 
     private Integer id;
@@ -30,6 +32,7 @@ public class ArticleResp implements Serializable {
     private LocalDate createDate;
     private Integer articleDetailId;
     private User author;
+    private ArticleEnums articleType;
     //收藏数
     private Integer collectionNum;
     //评论数

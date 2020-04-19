@@ -34,12 +34,15 @@ public class ArticleNumberServiceImpl extends ServiceImpl<ArticleNumberMapper, A
     }
 
     @Override
-    public boolean updateCommentNumByArticleId(Integer articleId) {
+    public boolean updateCommentNumByArticleId(Integer articleId, CalculationEnums enums) {
         ArticleNumber articleNumber = getByArticleId(articleId);
-        articleNumber.setCommentNum(articleNumber.getCommentNum() + 1);
-        UpdateWrapper<ArticleNumber> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("article_id", articleId);
-        Integer update = articleNumberMapper.update(articleNumber, updateWrapper);
+        if (enums.equals(CalculationEnums.ADD)) {
+            articleNumber.setCommentNum(articleNumber.getCommentNum() + 1);
+        }else{
+            articleNumber.setCommentNum(articleNumber.getCommentNum() - 1);
+        }
+
+        int update = articleNumberMapper.updateById(articleNumber);
         return update > 0;
     }
 

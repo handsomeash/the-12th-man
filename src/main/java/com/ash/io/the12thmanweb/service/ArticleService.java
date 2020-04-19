@@ -49,4 +49,11 @@ public interface ArticleService extends IService<Article> {
      */
     IPage<Article> getWriteArticles(Integer PageIndex, Integer PageSize, Integer userId);
 
+    /**
+     * 删除文章（逻辑删除）
+     *
+     * @param id
+     * @return
+     */
+    boolean deleteArticleById(Integer id);
 }

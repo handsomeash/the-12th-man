@@ -16,6 +16,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -96,12 +97,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+//    @Cacheable(value = "users", key = "#PageIndex")
     public IPage<User> findAllUsersByPage(Integer PageIndex, Integer PageSize) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("is_delete", 0).orderByAsc("register_date");
         //pageIndex:查询第几页,pageSize:查询几条数据
         Page<User> page = new Page<>(PageIndex, PageSize);
         return userMapper.selectPage(page, wrapper);
+    }
+
+    @Override
+    public boolean deleteUserById(Integer id) {
+        User user = userMapper.selectById(id);
+        user.setIsDelete(1);
+        int i = userMapper.updateById(user);
+        return i > 0;
     }
 
 

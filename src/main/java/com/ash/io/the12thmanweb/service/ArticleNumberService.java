@@ -23,7 +23,7 @@ public interface ArticleNumberService extends IService<ArticleNumber> {
      * @param articleId
      * @return
      */
-    boolean updateCommentNumByArticleId(Integer articleId);
+    boolean updateCommentNumByArticleId(Integer articleId, CalculationEnums enums);
 
     /**
      * 用户收藏文章或取消收藏文章

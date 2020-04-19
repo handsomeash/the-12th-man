@@ -56,6 +56,14 @@ public interface UserService extends IService<User> {
     IPage<User> findAllUsersByPage(Integer PageIndex, Integer PageSize);
 
     /**
+     * 根据id删除用户（逻辑删除）
+     *
+     * @param id
+     * @return
+     */
+    boolean deleteUserById(Integer id);
+
+    /**
      * 收藏文章
      *
      * @param userId

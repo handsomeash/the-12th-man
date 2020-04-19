@@ -22,8 +22,6 @@ public class ArticleConverter {
                 .imgUrl(articleDetail.getImgUrl())
                 .createDate(articleDetail.getCreateDate())
                 .content(articleDetail.getContent())
-//                .collectionNum(articleDetail.getCollectionNum())
-//                .commentNum(articleDetail.getCommentNum())
                 .author(author)
                 .build();
         return articleDetailResp;
@@ -37,6 +35,7 @@ public class ArticleConverter {
                 .title(article.getTitle())
                 .createDate(article.getCreateDate())
                 .userId(article.getUserId())
+                .articleType(article.getArticleType())
                 .author(author)
                 .collectionNum(number.getCollectionNum())
                 .commentNum(number.getCommentNum())
