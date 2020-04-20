@@ -30,6 +30,16 @@ public interface ArticleService extends IService<Article> {
     IPage<Article> getArticlesByType(Integer PageIndex, Integer PageSize, ArticleEnums type);
 
     /**
+     * 按照模糊查询分页查询所有文章
+     *
+     * @param PageIndex
+     * @param PageSize
+     * @param keywords
+     * @return
+     */
+    IPage<Article> getArticlesByKeywords(Integer PageIndex, Integer PageSize, String keywords);
+
+    /**
      * 分页查询用户收藏文章
      *
      * @param PageIndex

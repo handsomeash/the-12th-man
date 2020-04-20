@@ -57,6 +57,18 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
+    public IPage<Article> getArticlesByKeywords(Integer PageIndex, Integer PageSize, String keywords) {
+        //设置查询条件
+        QueryWrapper<Article> wrapper = new QueryWrapper();
+        //按时间倒序查询
+        wrapper.orderByDesc("create_date");
+        wrapper.eq("is_delete", 0).like("title",keywords);
+        //pageIndex:查询第几页,pageSize:查询几条数据
+        Page<Article> page = new Page<>(PageIndex, PageSize);
+        return articleMapper.selectPage(page, wrapper);
+    }
+
+    @Override
     public IPage<Article> getCollectionArticles(Integer PageIndex, Integer PageSize, Integer userId) {
 
         List<Integer> articleId = userService.getCollectionArticleIdByUserId(userId);

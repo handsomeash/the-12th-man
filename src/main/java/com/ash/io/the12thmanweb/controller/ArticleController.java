@@ -66,7 +66,8 @@ public class ArticleController {
                 articles = articleService.getArticlesByType(PageIndex, PageSize, ArticleEnums.BASKETBALL);
                 break;
             default:
-                articles = articleService.getArticles(PageIndex, PageSize);
+                //搜索框模糊查询
+                articles = articleService.getArticlesByKeywords(PageIndex, PageSize, type);
         }
         log.info("查询页数：" + PageIndex + "查询数据条数：" + PageSize);
         //获取总条数
@@ -129,19 +130,19 @@ public class ArticleController {
     }
 
     @PostMapping("/editArticle")
-    public Result editArticle(@RequestBody Map<String, String> map){
+    public Result editArticle(@RequestBody Map<String, String> map) {
         log.info(map.toString());
         int id = Integer.parseInt(map.get("articleId"));
         String content = map.get("content");
         String title = map.get("title");
         String type = map.get("type");
-        ArticleDetail articleDetail =  ArticleDetail.builder()
+        ArticleDetail articleDetail = ArticleDetail.builder()
                 .id(id)
                 .title(title)
                 .content(content)
                 .articleType(ArticleEnums.valueOf(type))
                 .build();
-        articleDetailService.editArticle(id,articleDetail);
+        articleDetailService.editArticle(id, articleDetail);
         String message = "编辑成功";
         return new Result(ResultCode.SUCCESS.getCode(), message);
     }
