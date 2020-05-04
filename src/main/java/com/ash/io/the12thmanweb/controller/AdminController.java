@@ -207,21 +207,22 @@ public class AdminController {
     }
 
     @PutMapping("/passwordAdmin")
-    public Result editAdminPassWord(@RequestBody Map<String, String> map) {
-        String oldPassword = map.get("oldPassword");
-        String newPassword = map.get("newPassword");
+    public Result editAdminPassWord(@RequestBody Map<String, Object> map) {
+        Integer id = (Integer) map.get("id");
+        String oldPassword = (String) map.get("oldPassword");
+        String newPassword = (String) map.get("newPassword");
         String message;
-        Admin admin = adminService.findByPassword(oldPassword);
-        if (Objects.isNull(admin)) {
-            message = "旧密码不正确，修改失败";
-            log.info("editUserPassword:" + message);
-            return new Result(ResultCode.FAIL.getCode(), message);
-        } else {
+        Admin admin = adminService.getById(id);
+        if(Objects.nonNull(admin) && admin.getPassword().equals(oldPassword)){
             admin.setPassword(newPassword);
             adminService.saveOrUpdate(admin);
             message = "密码修改成功";
             log.info("editAdminPassword:" + message);
             return new Result(ResultCode.SUCCESS.getCode(), message);
+        }else{
+            message = "旧密码不正确，修改失败";
+            log.info("editUserPassword:" + message);
+            return new Result(ResultCode.FAIL.getCode(), message);
         }
     }
 }

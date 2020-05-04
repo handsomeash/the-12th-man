@@ -264,7 +264,7 @@ public class UserController {
      */
     @PostMapping("/user/editPortrait")
     public String editPortrait(MultipartFile file) {
-        String folder = "D:/workspace/img";
+        String folder = "F:/img";
         File imageFolder = new File(folder);
         File f = new File(imageFolder, MyUtil.getRandomString(5)
                 + file.getOriginalFilename().substring(file.getOriginalFilename().length() - 4));
